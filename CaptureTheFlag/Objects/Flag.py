@@ -1,4 +1,5 @@
 import pygame
+import Constants
 from .GameObject import GameObject
 
 ## The flag the player is trying to obtain and bring back to the goal.
@@ -8,12 +9,11 @@ class Flag(GameObject):
     ## Constructor.
     ## \param[in]   initial_x_position - The initial X position of the flag.
     ## \param[in]   initial_y_position - The initial Y position of the flag.
-    ## \param[in]   image_filepath - The filepath to the image to use for the flag.
     ## \author  CJ Harper
     ## \date    08/25/2018
-    def __init__(self, initial_x_position, initial_y_position, image_filepath):
+    def __init__(self, initial_x_position, initial_y_position):
         GameObject.__init__(self, initial_x_position, initial_y_position)
-        self.Image = pygame.image.load(image_filepath).convert()
+        self.Image = pygame.image.load(Constants.FLAG_IMAGE_FILEPATH).convert()
 
     ## Moves the flag to the specified location.
     ## \param[in]   x_position - The X position to move the flag to.

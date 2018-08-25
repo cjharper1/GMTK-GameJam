@@ -1,4 +1,5 @@
 import pygame
+import Constants
 from .GameObject import GameObject
 
 ## Represents the player character.
@@ -8,14 +9,12 @@ class Player(GameObject):
     ## Constructor.
     ## \param[in]   initial_x_position - The initial X position of the character with respect to the game world.
     ## \param[in]   initial_y_position - The initial Y position of the character with respect to the game world.
-    ## \param[in]   default_image_filepath - The default image for the player.
-    ## \param[in]   player_with_flag_image_filepath - The image to use for the player when they have the flag.
     ## \author  CJ Harper
     ## \date    08/25/2018
-    def __init__(self, initial_x_position : int, initial_y_position : int, default_image_filepath, player_with_flag_image_filepath):
+    def __init__(self, initial_x_position : int, initial_y_position : int):
         GameObject.__init__(self, initial_x_position, initial_y_position)
-        self.__DefaultImage = pygame.image.load(default_image_filepath).convert()
-        self.__WithFlagImage = pygame.image.load(player_with_flag_image_filepath).convert()
+        self.__DefaultImage = pygame.image.load(Constants.PLAYER_IMAGE_FILEPATH).convert()
+        self.__WithFlagImage = pygame.image.load(Constants.PLAYER_WITH_FLAG_IMAGE_FILEPATH).convert()
 
         ## The current image to show for the player. The default image is used until an action occurs
         ## which would change this from the default.

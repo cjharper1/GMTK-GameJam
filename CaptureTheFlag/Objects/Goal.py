@@ -1,4 +1,5 @@
 import pygame
+import Constants
 from .GameObject import GameObject
 
 ## Represents the goal the player is trying to get the flag into.
@@ -8,10 +9,9 @@ class Goal(GameObject):
     ## Constructor.
     ## \param[in]   x_position - The x position of the goal.
     ## \param[in]   y_position - The y position of the goal.
-    ## \param[in]   image_filepath - The relative filepath to the image to use for the goal.
     ## \author  CJ Harper
     ## \date    08/25/2018
     def __init__(self, x_position, y_position, image_filepath):
         GameObject.__init__(self, x_position, y_position)
-        self.Image = pygame.image.load(image_filepath).convert()
+        self.Image = pygame.image.load(Constants.GOAL_IMAGE_FILEPATH).convert()
     
