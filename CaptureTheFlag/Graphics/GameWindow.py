@@ -2,38 +2,34 @@ from .Color import Color
 from .Sprite import Sprite
 import pygame
 
+## The game window containing the main screen on which all game objects are drawn.
+## \author  CJ Harper
+## \date    08/04/2018
 class GameWindow():
+    ## Create the game window.
+    ## \param[in]   height - The height in pixels of the game window screen.
+    ## \param[in]   width - The width in pixels of the game window screen.
+    ## \author  CJ Harper
+    ## \date    08/04/2018
     def __init__(self, height : int, width : int):
+        # INITIALIZE THE SCREEN.
         self.Screen = pygame.display.set_mode((height, width))
         self.Screen.fill((0,0,0))
-        self._sprites = []
 
-    ## Adds a sprite to be drawn on the screen. This sprite will not be drawn until the next screen update.
-    ## param[in] sprite - The sprite to add to the group of sprites drawn on screen.
-    ## \author  CJ Harper
-    ## \date    08/04/2018
-    def AddSprite(self, sprite : Sprite):
-        self._sprites.append(sprite)
-
-    ## Removes an sprite from the group of sprites drawn on screen each update.
-    ## The sprite will not be removed until the next screen update.
-    ## param[in] sprite - The sprite to remove from the list of drawn sprites.
-    ## \author  CJ Harper
-    ## \date    08/04/2018
-    def RemoveSprite(self, sprite : Sprite):
-        try:
-            self._sprites.remove(sprite)
-        except:
-            # No action needs to be taken. The user wants this object to be removed from the collection
-            # but the collection is already in the desired state. No reason to alert the user to this issue.
-            pass
-
-    ## Updates the screen by clearing it and drawing all of the sprites in their new positions.
-    ## \author  CJ Harper
-    ## \date    08/04/2018
-    def Update(self):
+    ## Updates the screen by clearing it and drawing all of the sprites in their new positions
+    ## based on the game map.
+    ## \param[in]   game_map - The game map to use in redrawing all objects to the screen.
+    ## \author  Michael Watkinson
+    ## \date    08/25/2018
+    def Update(self, game_map):
+        # CLEAR THE GAME WINDOW.
         self.Clear()
-        self._drawSprites()
+        
+        # DRAW ALL OBJECTS IN THE GAME MAP.
+        for game_object in game_map.Map:
+            self.__DrawImage(game_object)
+        
+        # UPDATE THE DISPLAY TO MAKE THE UPDATED OBJECTS VISIBLE.
         pygame.display.update()
 
     ## Clears the screen.
@@ -42,9 +38,10 @@ class GameWindow():
     def Clear(self):
         self.Screen.fill((0,0,0))
 
-    ## Draws all sprites to the screen.
-    ## \author  CJ Harper
+    ## Draws the game object to the screen.
+    ## \param[in]   game_object - The game object to draw to the screen.
+    ## \author  Michael Watkinson
     ## \date    08/04/2018
-    def _drawSprites(self):
-        for sprite in self._sprites:
-            self.Screen.blit(sprite.Image, sprite.GetPosition())
+    def __DrawImage(self, game_object):
+        # DRAW THE IMAGE TO THE SCREEN.
+        self.Screen.blit(game_object.Image, (game_object.XPosition, game_object.YPosition))
