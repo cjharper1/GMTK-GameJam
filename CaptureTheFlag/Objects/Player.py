@@ -6,14 +6,20 @@ from .GameObject import GameObject
 ## \date    08/25/2018
 class Player(GameObject):
     ## Constructor.
-    ## \param[in]   sprite - The sprite representing this character.
     ## \param[in]   initial_x_position - The initial X position of the character with respect to the game world.
     ## \param[in]   initial_y_position - The initial Y position of the character with respect to the game world.
+    ## \param[in]   default_image_filepath - The default image for the player.
+    ## \param[in]   player_with_flag_image_filepath - The image to use for the player when they have the flag.
     ## \author  CJ Harper
     ## \date    08/25/2018
-    def __init__(self, initial_x_position : int, initial_y_position : int, image_filepath):
+    def __init__(self, initial_x_position : int, initial_y_position : int, default_image_filepath, player_with_flag_image_filepath):
         GameObject.__init__(self, initial_x_position, initial_y_position)
-        self.Image = pygame.image.load(image_filepath).convert()
+        self.__DefaultImage = pygame.image.load(default_image_filepath).convert()
+        self.__WithFlagImage = pygame.image.load(player_with_flag_image_filepath).convert()
+
+        ## The current image to show for the player. The default image is used until an action occurs
+        ## which would change this from the default.
+        self.Image = self.__DefaultImage
 
         ## The flag this player is holding. This can be None if the player is not holding a flag.
         ## The player does not spawn holding a flag.
@@ -45,6 +51,16 @@ class Player(GameObject):
     ## \date    08/25/2018
     def MoveRight(self):
         self.__Move(x_pixels_to_move = self.__Speed)
+
+    ## Picks up the flag for the player.
+    ## \param[in]   flag - The flag the player is picking up.
+    ## \author  CJ Harper
+    ## \date    08/25/2018
+    def PickUpFlag(self, flag):
+        self.HeldFlag = flag
+        
+        # Update the player image to show they have the flag now.
+        self.Image = self.__WithFlagImage
 
     ## Moves the player by the specified number of pixels from their current location.
     ## \param[in]   x_pixels_to_move - The number of pixels to move in the x direction. A negative
