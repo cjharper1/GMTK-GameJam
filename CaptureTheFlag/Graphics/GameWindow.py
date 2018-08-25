@@ -44,4 +44,5 @@ class GameWindow():
     ## \date    08/04/2018
     def __DrawImage(self, game_object):
         # DRAW THE IMAGE TO THE SCREEN.
-        self.Screen.blit(game_object.Image, (game_object.XPosition, game_object.YPosition))
+        # Objects are drawn in relation to their top-left corner.
+        self.Screen.blit(game_object.Image, game_object.TopLeftCornerPosition)

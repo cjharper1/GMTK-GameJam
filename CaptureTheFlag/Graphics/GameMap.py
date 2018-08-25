@@ -73,8 +73,7 @@ class GameMap(object):
                     object_class_name, image_filepath = ObjectMapping[ascii_object].value
                     object = getattr(sys.modules[__name__], object_class_name)(
                         x_position,
-                        y_position,
-                        image_filepath)
+                        y_position)
                     self.Map.append(object)
                 except KeyError:
                     # If the mapping didn't exist, then the current space is unoccupied.

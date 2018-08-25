@@ -11,7 +11,7 @@ class Goal(GameObject):
     ## \param[in]   y_position - The y position of the goal.
     ## \author  CJ Harper
     ## \date    08/25/2018
-    def __init__(self, x_position, y_position, image_filepath):
+    def __init__(self, x_position, y_position):
         GameObject.__init__(self, x_position, y_position)
         self.Image = pygame.image.load(Constants.GOAL_IMAGE_FILEPATH).convert()
     
