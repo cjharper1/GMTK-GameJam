@@ -5,6 +5,8 @@ import pygame
 
 from Objects.GameObject import GameObject
 from Objects.Wall import Wall
+from Objects.Flag import Flag
+from Objects.Goal import Goal
 
 ## A mapping of player move direction to the relevant coordinates to check for collision.
 ## \author  Michael Watkinson
@@ -62,6 +64,14 @@ def HandleCollision(game_map, player, move_direction):
     # HANDLE WALL COLLISION.
     if (isinstance(colliding_object, Wall)):
         HandleWallCollision(player, colliding_object, coordinates, move_direction)
+        
+    # HANDLE FLAG COLLISION.
+    if (isinstance(colliding_object, Flag)):
+        HandleFlagCollision(player, colliding_object, game_map)
+
+    # HANDLE GOAL COLLISION.
+    if (isinstance(colliding_object, Goal)):
+        HandleGoalCollision(player)
 
 ## \param[in]   game_map - The GameMap object containing all of the game objects.
 ## \param[in]   player_object - The Player object to determine collision for.
@@ -121,3 +131,25 @@ def HandleWallCollision(player_object, wall_object, coordinates, move_direction)
         pixels_to_move = (player_top_x - wall_bottom_x) + 1
         player_object.Move(x_movement_in_pixels = -pixels_to_move, y_movement_in_pixels = 0)
     
+## Handles the player colliding with a flag.
+## \param[in]   player - The player.
+## \param[in]   flag - The flag they collided with.
+## \param[in]   map - The game map.
+## \author  CJ Harper
+## \date    08/25/2018
+def HandleFlagCollision(player, flag, map):
+    # PICK UP THE FLAG.
+    player.PickUpFlag(flag)
+
+    # REMOVE THE FLAG FROM THE SCREEN SINCE THE PLAYER IS HOLDING IT.
+    map.RemoveObject(flag)
+
+## Handles the player colliding with the goal.
+## \param[in]   player - The player.
+## \author  CJ Harper
+## \date    08/25/2018
+def HandleGoalCollision(player):
+    # CHECK IF THE PLAYER IS HOLDING THE FLAG.
+    player_has_flag = player.HeldFlag is not None
+    if player_has_flag:
+        raise "You Win!"

@@ -105,4 +105,10 @@ class GameMap(object):
         grid_row_index = int(y_coordinate / GameObject.HeightPixels)
         grid_column_index = int(x_coordinate / GameObject.WidthPixels)
         return (grid_row_index, grid_column_index)
-        
+
+    ## Remove a game object from the map.
+    ## \author  CJ Harper
+    ## \date    08/25/2018
+    def RemoveObject(self, object):
+        grid_position = self.GetGridPosition(object.TopLeftCornerPosition)
+        self.Map.pop(grid_position)

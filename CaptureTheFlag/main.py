@@ -18,9 +18,6 @@ game_window = GameWindow(640, 480)
 # CREATE THE GAME MAP.
 game_map = GameMap('Maps/Map1.txt')
 
-# CREATE THE SCOREBOARD.
-
-
 # CALCULATE THE FRAMES PER SECOND FOR THE GAME.
 # Limit the game to 60 fps.
 milliseconds_per_second = 1000
