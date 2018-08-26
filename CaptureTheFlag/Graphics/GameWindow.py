@@ -26,7 +26,7 @@ class GameWindow():
         self.Clear()
         
         # DRAW ALL OBJECTS IN THE GAME MAP.
-        for game_object in game_map.Map:
+        for game_object in game_map.Map.values():
             self.__DrawImage(game_object)
         
         # UPDATE THE DISPLAY TO MAKE THE UPDATED OBJECTS VISIBLE.

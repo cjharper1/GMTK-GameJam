@@ -77,11 +77,7 @@ class GameMap(object):
                     object = getattr(sys.modules[__name__], object_class_name)(
                         x_position,
                         y_position)
-<<<<<<< HEAD
                     self.Map[(row_index, column_index)] = object
-=======
-                    self.Map.append(object)
->>>>>>> d3485473ea3b8055e5f40346b67a450c0014a204
                 except KeyError:
                     # If the mapping didn't exist, then the current space is unoccupied.
                     pass
@@ -106,7 +102,7 @@ class GameMap(object):
     def GetGridPosition(self, coordinates):
         # DETERMINE THE GRID POSITION OF THE COORDINATES.
         x_coordinate, y_coordinate = coordinates
-        grid_row_index = math.ceil(y_coordinate / GameObject.HeightPixels)
-        grid_column_index = math.ceil(x_coordinate / GameObject.WidthPixels)
+        grid_row_index = int(y_coordinate / GameObject.HeightPixels)
+        grid_column_index = int(x_coordinate / GameObject.WidthPixels)
         return (grid_row_index, grid_column_index)
         
