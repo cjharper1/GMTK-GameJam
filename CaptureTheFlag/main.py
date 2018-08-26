@@ -10,12 +10,16 @@ from Graphics.GameWindow import GameWindow
 from Graphics.Sprite import Sprite
 
 pygame.init()
+pygame.font.init()
 
 # CREATE THE GAME WINDOW.
 game_window = GameWindow(640, 480)
 
 # CREATE THE GAME MAP.
 game_map = GameMap('Maps/Map1.txt')
+
+# CREATE THE SCOREBOARD.
+
 
 # CALCULATE THE FRAMES PER SECOND FOR THE GAME.
 # Limit the game to 60 fps.

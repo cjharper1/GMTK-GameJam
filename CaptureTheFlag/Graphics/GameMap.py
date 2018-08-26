@@ -1,4 +1,5 @@
 from enum import Enum
+import math
 import sys
 
 import Constants
@@ -12,10 +13,10 @@ from Objects.Wall import Wall
 ## \author  Michael Watkinson
 ## \date    08/25/2018
 class ObjectMapping(Enum):
-    F = ('Flag', Constants.FLAG_IMAGE_FILEPATH)
-    O = ('Goal', Constants.GOAL_IMAGE_FILEPATH)
-    P = ('Player', Constants.PLAYER_IMAGE_FILEPATH)
-    X = ('Wall', Constants.WALL_IMAGE_FILEPATH)
+    F = 'Flag'
+    O = 'Goal'
+    P = 'Player'
+    X = 'Wall'
 
 ## The map containing all game object coordinates.
 ## \author  Michael Watkinson
@@ -33,8 +34,10 @@ class GameMap(object):
         self.MapHeight = 0
         ## The width of the map in terms of game objects.
         self.MapWidth = 0
-        ## The map containing all of the game objects.
-        self.Map = []
+        ## The map containing all of the game objects as a dictionary.  The key of the dictionary is
+        ## a two-tuple of the coordinates of the block the object is currently occupying and the 
+        ## value is the object.
+        self.Map = {}
         
         # PARSE MAP FILE.
         self.ParseMap()
@@ -70,24 +73,36 @@ class GameMap(object):
                 # Create the game object for the current ASCII object.
                 try:
                     # Parse the game object using the ObjectMapping class.
-                    object_class_name, image_filepath = ObjectMapping[ascii_object].value
+                    object_class_name = ObjectMapping[ascii_object].value
                     object = getattr(sys.modules[__name__], object_class_name)(
                         x_position,
-                        y_position,
-                        image_filepath)
-                    self.Map.append(object)
+                        y_position)
+                    self.Map[(row_index, column_index)] = object
                 except KeyError:
                     # If the mapping didn't exist, then the current space is unoccupied.
                     pass
                   
-    ## Returns the player object from the game map.
+    ## Gets the player object from the game map.
+    ## \return  The Player object.
     ## \author  Michael Watkinson
     ## \date    08/25/2018
     def GetPlayer(self):
         # SEARCH THROUGH ALL THE OBJECTS IN THE MAP FOR THE PLAYER OBJECT.
-        for object in self.Map:
+        for object in self.Map.values():
             # Check if the current object is the player.
             player_found = (isinstance(object, Player))
             if player_found:
                 return object
-    
+                
+    ## Gets the grid position for the specified coordinates.
+    ## \param[in]   coordinates - A two-tuple of the X and Y coordinates.
+    ## \return  A two-tuple for the row and column indices of the grid position.
+    ## \author  Michael Watkinson
+    ## \date    08/25/2018
+    def GetGridPosition(self, coordinates):
+        # DETERMINE THE GRID POSITION OF THE COORDINATES.
+        x_coordinate, y_coordinate = coordinates
+        grid_row_index = math.ceil(y_coordinate / GameObject.HeightPixels)
+        grid_column_index = math.ceil(x_coordinate / GameObject.WidthPixels)
+        return (grid_row_index, grid_column_index)
+        
