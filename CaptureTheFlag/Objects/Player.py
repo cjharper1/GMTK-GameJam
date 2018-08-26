@@ -69,11 +69,10 @@ class Player(GameObject):
     ## \author  CJ Harper
     ## \date    08/25/2018
     def __Move(self, x_pixels_to_move = 0, y_pixels_to_move = 0):
-        # MOVE THE CHARACTER.
-        self.XPosition += x_pixels_to_move
-        self.YPosition += y_pixels_to_move
+        # MOVE THE PLAYER.
+        self.Move(x_pixels_to_move, y_pixels_to_move)
 
         # MOVE THE FLAG ALONG WITH THE CHARACTER IF THEY ARE HOLDING ONE.
         character_is_holding_flag = self.HeldFlag is not None
         if character_is_holding_flag:
-            self.HeldFlag.SetPosition(self.XPosition, self.YPosition)
+            self.HeldFlag.Move(x_pixels_to_move, y_pixels_to_move)
