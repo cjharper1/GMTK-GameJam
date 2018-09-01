@@ -50,15 +50,24 @@ class Sword(object):
     ## \author  Jacob Pike
     ## \date    09/01/2018
     def __init__(self):
-        # CREATE AN EMPTY SPRITE.
+        # CREATE THE SPRITE FOR THE SWORD.
         ## The sprite (image) for the sword.
         self.Sprite = pygame.sprite.Sprite()
 
-        ## \todo    Load image from file.
+        # In order to handle transparency and rotation easily, a separate, larger surface
+        # is needed onto which the actual sword image file is blitted to.
         self.Sprite.image = pygame.Surface((Sword.IMAGE_DIMENSION_IN_PIXELS, Sword.IMAGE_DIMENSION_IN_PIXELS))
         # Color-keying is currently used for transparency due to its simplicity.
         self.Sprite.image.fill(Sword.TRANSPARENT_COLOR.value)
         self.Sprite.image.set_colorkey(Sword.TRANSPARENT_COLOR.value)
+        # Since the sword image is smaller than the full surface, it's position when
+        # blitted to the surface needs to be adjusted so that it will appear in
+        # the center when swinging.  This exact offset is dependent on the exact
+        # size and position of the sword within its image.
+        SWORD_IMAGE_X_OFFSET_IN_PIXELS = 32
+        SWORD_IMAGE_Y_OFFSET_IN_PIXELS = 16
+        sword_image = pygame.image.load('../Images/Sword.gif').convert()
+        self.Sprite.image.blit(sword_image, (SWORD_IMAGE_X_OFFSET_IN_PIXELS, SWORD_IMAGE_Y_OFFSET_IN_PIXELS))
 
         # INITIALIZE REMAINING MEMBER VARIABLES.
         ## The screen position of the sword's handle.
@@ -114,16 +123,15 @@ class Sword(object):
         if not self.IsSwinging:
             return
 
-        # CLEAR ANY PREVIOUS RENDERINGS OF THE SWORD.
-        self.Sprite.image.fill(Sword.TRANSPARENT_COLOR.value)
-
-        # DRAW THE SWORD.
-        pygame.draw.line(
-            self.Sprite.image, 
-            self.Color.value, 
-            self.HandleLocalImagePosition.AsXYTuple(), 
-            self.TipLocalImagePosition.AsXYTuple(), 
-            self.WidthInPixels)
+        # DRAW THE A DEBUG LINE FOR THE SWORD IF ENABLED.
+        DEBUG_DRAWING_ENABLED = False
+        if DEBUG_DRAWING_ENABLED:
+            pygame.draw.line(
+                self.Sprite.image, 
+                self.Color.value, 
+                self.HandleLocalImagePosition.AsXYTuple(), 
+                self.TipLocalImagePosition.AsXYTuple(), 
+                self.WidthInPixels)
 
         # ROTATE THE SWORD BASED ON HOW IT'S BEING SWUNG.
         rotated_sword_image = pygame.transform.rotate(self.Sprite.image, self.CurrentRotationAngleInDegrees)
@@ -148,7 +156,6 @@ class Sword(object):
         screen.blit(rotated_sword_image, handle_screen_position.AsXYTuple())
 
         # DRAW DEBUG RECTANGLES IF DEBUGGING IS ENABLED.
-        DEBUG_DRAWING_ENABLED = True
         if DEBUG_DRAWING_ENABLED:
             # DRAW A DEBUG RECTANGLE FOR THE UNADJUSTED POSITION.
             DEBUG_RECTANGLE_OUTLINE_WIDTH_IN_PIXELS = 1
