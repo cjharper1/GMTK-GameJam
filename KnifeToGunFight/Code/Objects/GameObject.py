@@ -1,6 +1,5 @@
 import pygame
 
-
 # Base class of game objects that will be displayed on the map
 class GameObject(object):
     # The width of a a game object in pixels.
