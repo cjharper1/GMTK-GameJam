@@ -51,9 +51,10 @@ def CheckForCollision(level_map, game_object, move_direction):
         
         # Check for an object occupying the same space.
         colliding_object = level_map.Map.get(grid_position, None)
-        collision_occurred = (colliding_object is not None)
-        if collision_occurred:
-            return (colliding_object, coordinates)
+        if colliding_object is not None:
+            collision_occurred = game_object.Coordinates.colliderect(colliding_object.Coordinates)
+            if collision_occurred:
+                return (colliding_object, coordinates)
             
     # NO COLLISION OCCURRED.
     return (None, None)

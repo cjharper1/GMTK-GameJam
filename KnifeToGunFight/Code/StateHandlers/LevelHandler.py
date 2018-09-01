@@ -3,64 +3,16 @@ import sys
 
 import pygame
 
-from GameWindow import GameWindow
 from Graphics.LevelMap import LevelMap
+from .StateHandler import StateHandler
 from Objects.Player import Player
 from Utilities.CollisionDetection import HandleCollision, MoveDirection
+from Utilities.CollisionDetection import HandleCollision, MoveDirection
 
-## Handles the main execution of the game.
-## \author  Michael Watkinson
-## \date    09/01/2018
-def RunGame():
-    # INITIALIZE PYGAME.
-    pygame.init()
-    WIDTH = 1024
-    HEIGHT = 720
-    game_window = GameWindow(WIDTH, HEIGHT)
-    pygame.mixer.init()
-
-    # ENTER THE GAME MAIN LOOP.
-    current_state = LevelHandler(game_window)
-    while True:
-        # HANDLE THE CURRENT STATE OF THE GAME.
-        current_state = current_state.Run()
-        
-## The base state handler class.
-## \author  Michael Watkinson
-## \date    09/01/2018
-class Handler(object):
-    ## Initializes the handler object.
-    ## \param[in]   images - A dictionary with the image name as the key and the filepath as the value.
-    ## \param[in]   audio - A dictionary with the audio name as the key and the filepath as the value.
-    ## \author  Michael Watkinson
-    ## \date    09/01/2018
-    def __init__(self, images = None, audio = None):
-        # STORE THE IMAGE INSTANCE VARIABLES FOR THE HANDLER.
-        images_provided = images is not None
-        if images_provided:
-            for image_name, image_filepath in images.items():
-                # Load the image asset.
-                image = pygame.image.load(image_filepath)
-                setattr(self, image_name, image)
-        
-        # STORE THE AUDIO INSTANCE VARIABLES FOR THE HANDLER.
-        audio_provided = audio is not None
-        if audio_provided:
-            for audio_name, audio_filepath in audio.items():
-                # Load the audio asset.
-                audio_asset = pygame.mixer.Sound(audio_filepath)
-                setattr(self, audio_name, audio_asset)
-            
-        # CALCULATE THE FRAMES PER SECOND FOR THE GAME.
-        # Limit the game to 60 fps.
-        milliseconds_per_second = 1000
-        self.MaxFramesPerSecond = 60
-        self.FrameRate = math.floor(milliseconds_per_second / self.MaxFramesPerSecond)
-    
 ## The handler class for controlling a level of the game.
 ## \author  Michael Watkinson
 ## \date    09/01/2018
-class LevelHandler(Handler):
+class LevelHandler(StateHandler):
     ## Initializes the level handler.
     ## \param[in]  game_window - The GameWindow object to display the level on.
     ## \param[in]   level_filepath - The filepath of the level to load.  Defaults to None.
@@ -71,7 +23,7 @@ class LevelHandler(Handler):
         # INITIALIZE THE HANDLER.
         audio = {
             'BackgroundMusic': '../Audio/background_music.wav'}
-        Handler.__init__(self, audio = audio)
+        StateHandler.__init__(self, audio = audio)
         
         # INITIALIZE INSTANCE VARIABLES.
         self.GameWindow = game_window
@@ -144,8 +96,4 @@ class LevelHandler(Handler):
         if currently_pressed_keys[pygame.K_d]:
             player.MoveRight()
             HandleCollision(self.Map, player, MoveDirection.Right)
-                
-        # Check for mouse events.
-        #if event.type == pygame.MOUSEBUTTONDOWN:
-        #    position = pygame.mouse.get_pos()
-        #    arrows.append([math.atan2(position[1] - (player_position[1] + 32), position[0] - (player_position_1[0] + 26)), player_position_1[0] + 32, player_position_1[1] + 32])
+            
