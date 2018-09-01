@@ -1,6 +1,5 @@
 import pygame
-import Constants
-from GameObject import GameObject
+from Objects.GameObject import GameObject
 
 ## Represents a wall or a boundary in the game that the player cannot cross.
 ## \author  Michael Watkinson
