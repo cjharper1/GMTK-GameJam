@@ -1,5 +1,4 @@
 import pygame
-import Constants
 from .GameObject import GameObject
 
 ## Represents the player character.

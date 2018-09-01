@@ -5,6 +5,7 @@ import pygame
 
 from GameWindow import GameWindow
 from Graphics.LevelMap import LevelMap
+from Utilities.CollisionDetection import HandleCollision
 
 ## Handles the main execution of the game.
 ## \author  Michael Watkinson
@@ -28,21 +29,26 @@ def RunGame():
 ## \date    09/01/2018
 class Handler(object):
     ## Initializes the handler object.
+    ## \param[in]   images - A dictionary with the image name as the key and the filepath as the value.
     ## \param[in]   audio - A dictionary with the audio name as the key and the filepath as the value.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
-    def __init__(self, audio):
+    def __init__(self, images = None, audio = None):
         # STORE THE IMAGE INSTANCE VARIABLES FOR THE HANDLER.
-        #for image_name, image_filepath in images.items():
-        #    # Load the image asset.
-        #    image = pygame.image.load(image_filepath)
-        #    setattr(self, image_name, image)
+        images_provided = images is not None
+        if images_provided:
+            for image_name, image_filepath in images.items():
+                # Load the image asset.
+                image = pygame.image.load(image_filepath)
+                setattr(self, image_name, image)
         
         # STORE THE AUDIO INSTANCE VARIABLES FOR THE HANDLER.
-        for audio_name, audio_filepath in audio.items():
-            # Load the audio asset.
-            audio_asset = pygame.mixer.Sound(audio_filepath)
-            setattr(self, audio_name, audio_asset)
+        audio_provided = audio is not None
+        if audio_provided:
+            for audio_name, audio_filepath in audio.items():
+                # Load the audio asset.
+                audio_asset = pygame.mixer.Sound(audio_filepath)
+                setattr(self, audio_name, audio_asset)
             
         # CALCULATE THE FRAMES PER SECOND FOR THE GAME.
         # Limit the game to 60 fps.
@@ -64,7 +70,7 @@ class LevelHandler(Handler):
         # INITIALIZE THE HANDLER.
         audio = {
             'BackgroundMusic': '../Audio/background_music.wav'}
-        Handler.__init__(self, audio)
+        Handler.__init__(self, audio = audio)
         
         # INITIALIZE INSTANCE VARIABLES.
         self.GameWindow = game_window
@@ -101,35 +107,39 @@ class LevelHandler(Handler):
     ## \author  Michael Watkinson
     ## \date    09/01/2018
     def HandlePlayerInteraction(self):
-            # HANDLE QUIT EVENTS.
-            for event in pygame.event.get():
-                if event.type is pygame.QUIT:
-                    pygame.quit()
+        # HANDLE QUIT EVENTS.
+        for event in pygame.event.get():
+            # Check if the X button of the window was clicked.
+            if event.type is pygame.QUIT:
+                # Quit the game.
+                pygame.quit()
+                sys.exit()
+                
+            # Check if the 
+            if event.type is pygame.KEYDOWN:
+                if event.key is pygame.K_ESCAPE:
                     sys.exit()
-                if event.type is pygame.KEYDOWN:
-                    if event.key is pygame.K_ESCAPE:
-                        sys.exit()
-                        pygame.quit()
+                    pygame.quit()
 
-            # GET THE PLAYER OBJECT FROM THE MAP.
-            player = self.Map.GetPlayer()
-            
-            # HANDLE PLAYER MOVEMENT.
-            currently_pressed_keys = pygame.key.get_pressed()
-            if currently_pressed_keys[pygame.K_w]:
-                player.MoveUp()
-                HandleCollision(game_map, player, MoveDirection.Up)
-            if currently_pressed_keys[pygame.K_a]:
-                player.MoveLeft()
-                HandleCollision(game_map, player, MoveDirection.Left)
-            if currently_pressed_keys[pygame.K_s]:
-                player.MoveDown()
-                HandleCollision(game_map, player, MoveDirection.Down)
-            if currently_pressed_keys[pygame.K_d]:
-                player.MoveRight()
-                HandleCollision(game_map, player, MoveDirection.Right)
-                    
-            # Check for mouse events.
-            #if event.type == pygame.MOUSEBUTTONDOWN:
-            #    position = pygame.mouse.get_pos()
-            #    arrows.append([math.atan2(position[1] - (player_position[1] + 32), position[0] - (player_position_1[0] + 26)), player_position_1[0] + 32, player_position_1[1] + 32])
+        # GET THE PLAYER OBJECT FROM THE MAP.
+        player = self.Map.GetPlayer()
+        
+        # HANDLE PLAYER MOVEMENT.
+        currently_pressed_keys = pygame.key.get_pressed()
+        if currently_pressed_keys[pygame.K_w]:
+            player.MoveUp()
+            HandleCollision(self.Map, player, MoveDirection.Up)
+        if currently_pressed_keys[pygame.K_a]:
+            player.MoveLeft()
+            HandleCollision(self.Map, player, MoveDirection.Left)
+        if currently_pressed_keys[pygame.K_s]:
+            player.MoveDown()
+            HandleCollision(self.Map, player, MoveDirection.Down)
+        if currently_pressed_keys[pygame.K_d]:
+            player.MoveRight()
+            HandleCollision(self.Map, player, MoveDirection.Right)
+                
+        # Check for mouse events.
+        #if event.type == pygame.MOUSEBUTTONDOWN:
+        #    position = pygame.mouse.get_pos()
+        #    arrows.append([math.atan2(position[1] - (player_position[1] + 32), position[0] - (player_position_1[0] + 26)), player_position_1[0] + 32, player_position_1[1] + 32])
