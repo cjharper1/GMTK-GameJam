@@ -8,7 +8,7 @@ from .GameObject import GameObject
 ## \date    09/01/2018
 class Laser(GameObject):
     ## Represents the various colors a laser can be.
-    class Color(Enum.enum):
+    class Color(Enum):
         Red = 1
         Blue = 2
         Green = 3
