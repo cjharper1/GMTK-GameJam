@@ -20,3 +20,20 @@ class Vector2(object):
     ## \date    09/01/2018
     def AsXYTuple(self):
         return (self.X, self.Y)
+
+    ## Compares the vector to another vector.
+    ## \return  True if the two vectors have the same components, or false otherwise.
+    ## \author  Tom Rogan
+    ## \date    09/01/2018
+    def __eq__(self, other):
+        if isinstance(other, Vector2):
+            return (self.X == other.X) and (self.Y == other.Y)
+        return False
+
+    ## Returns a hash value for the vector. Must be overridden
+    ## because __eq__ is overridden.
+    ## \return  The hash of the vector.
+    ## \author  Tom Rogan
+    ## \date    09/01/2018
+    def __hash__(self):
+        return self.X ^ self.Y
