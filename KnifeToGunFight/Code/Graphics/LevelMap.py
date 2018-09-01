@@ -1,5 +1,6 @@
 # Class for displaying the map of a level.
 from Objects import GameObject
+from Objects.Player import Player
 
 class LevelMap(object):
     def __init__(self, currentLevel):
