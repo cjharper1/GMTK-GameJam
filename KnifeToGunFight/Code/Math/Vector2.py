@@ -13,3 +13,10 @@ class Vector2(object):
         self.X = x
         ## The y (horizontal) component.
         self.Y = y
+
+    ## Returns the vector as an (x, y) tuple.
+    ## \return  The vector as an (x, y) tuple.
+    ## \author  Jacob Pike
+    ## \date    09/01/2018
+    def AsXYTuple(self):
+        return (self.X, self.Y)
