@@ -88,6 +88,14 @@ class Sword(object):
         self.DestinationRotationAngleInDegrees = 0.0
         ## True if the sword is currently being swung; false if not.
         self.IsSwinging = False
+        ## The bounding rectangle for the sword.
+        ## \todo    This is currently being set to a fix value each
+        ## time the sword starts being swung.  It would be better to
+        ## have this dynamically calculated to account for rotation
+        ## (or perform more advanced line or rotated bounding box
+        ## collision, but there's likely not time to get that working
+        ## before the game's deadline).
+        self.BoundingScreenRectangle = pygame.Rect(0, 0, 0, 0)
         ## The width of the sword in pixels.
         self.WidthInPixels = 1
         ## The color of the sword.
@@ -105,7 +113,7 @@ class Sword(object):
             return
 
         # ROTATE THE SWORD AN APPROPRIATE AMOUNT.
-        ROTATION_SPEED_IN_DEGREES_PER_SECOND = 90.0
+        ROTATION_SPEED_IN_DEGREES_PER_SECOND = 180.0
         rotation_amount_in_degrees = ROTATION_SPEED_IN_DEGREES_PER_SECOND * time_since_last_update_in_seconds
         self.CurrentRotationAngleInDegrees += rotation_amount_in_degrees
 
@@ -166,6 +174,9 @@ class Sword(object):
             adjusted_debug_image_rect = rotated_image_rect.move(handle_screen_position.AsXYTuple())
             pygame.draw.rect(screen, Color.Magenta.value, adjusted_debug_image_rect, DEBUG_RECTANGLE_OUTLINE_WIDTH_IN_PIXELS)
 
+            # DRAW A DEBUG RECTANGLE FOR THE BOUNDING BOX FOR COLLISIONS.
+            pygame.draw.rect(screen, Color.Red.value, self.BoundingScreenRectangle, DEBUG_RECTANGLE_OUTLINE_WIDTH_IN_PIXELS)
+
     ## Starts swinging the sword left (if not already swinging).
     ## \param[in]   sword_handle_screen_position - The screen position of the sword's handle.
     ##      Intended to be placed such that the sword appears attached to the player.
@@ -183,12 +194,21 @@ class Sword(object):
         # CONFIGURE THE SWORD FOR SWINGING LEFT.
         self.IsSwinging = True
 
-        # The sword will start being horizontal (from left to right).
+        # The initial position of the sword is always right to make
+        # it easier to calculate the starting/ending angles for rotation.
         self.__FaceRight()
 
         # The sword will swing counterclockwise from 0 degrees (horizontal) to 90 degrees (vertical).
         self.CurrentRotationAngleInDegrees = 0.0
         self.DestinationRotationAngleInDegrees = 90.0
+
+        # The bounding screen rectangle should be in the top-right quadrant
+        # of the image rectangle.
+        self.BoundingScreenRectangle = pygame.Rect(
+            self.HandleScreenPosition.X + Sword.SWORD_LENGTH_IN_PIXELS,
+            self.HandleScreenPosition.Y,
+            Sword.SWORD_LENGTH_IN_PIXELS,
+            Sword.SWORD_LENGTH_IN_PIXELS)
 
     ## Starts swinging the sword right (if not already swinging).
     ## \param[in]   sword_handle_screen_position - The screen position of the sword's handle.
@@ -207,12 +227,21 @@ class Sword(object):
         # CONFIGURE THE SWORD FOR SWINGING RIGHT.
         self.IsSwinging = True
 
-        # The sword will start being horizontal (from right to left).
+        # The initial position of the sword is always right to make
+        # it easier to calculate the starting/ending angles for rotation.
         self.__FaceRight()
 
-        # The sword will swing clockwise from 0 degrees (horizontal) to 270 degrees (vertical).
+        # The sword will swing clockwise from 90 degrees to 180 degrees.
         self.CurrentRotationAngleInDegrees = 90.0
         self.DestinationRotationAngleInDegrees = 180.0
+
+        # The bounding screen rectangle should be in the top-left quadrant
+        # of the image rectangle.
+        self.BoundingScreenRectangle = pygame.Rect(
+            self.HandleScreenPosition.X,
+            self.HandleScreenPosition.Y,
+            Sword.SWORD_LENGTH_IN_PIXELS,
+            Sword.SWORD_LENGTH_IN_PIXELS)
 
     ## Starts swinging the sword down (if not already swinging).
     ## \param[in]   sword_handle_screen_position - The screen position of the sword's handle.
@@ -231,12 +260,21 @@ class Sword(object):
         # CONFIGURE THE SWORD FOR SWINGING DOWN.
         self.IsSwinging = True
 
-        # The sword will start being vertical (from top to bottom).
+        # The initial position of the sword is always right to make
+        # it easier to calculate the starting/ending angles for rotation.
         self.__FaceRight()
 
-        # The sword will swing counterclockwise from 0 degrees to 90 degrees.
+        # The sword will swing counterclockwise from 180 degrees to 270 degrees.
         self.CurrentRotationAngleInDegrees = 180.0
         self.DestinationRotationAngleInDegrees = 270.0
+
+        # The bounding screen rectangle should be in the bottom-left quadrant
+        # of the image rectangle.
+        self.BoundingScreenRectangle = pygame.Rect(
+            self.HandleScreenPosition.X,
+            self.HandleScreenPosition.Y + Sword.SWORD_LENGTH_IN_PIXELS,
+            Sword.SWORD_LENGTH_IN_PIXELS,
+            Sword.SWORD_LENGTH_IN_PIXELS)
 
     ## Starts swinging the sword up (if not already swinging).
     ## \param[in]   sword_handle_screen_position - The screen position of the sword's handle.
@@ -255,12 +293,21 @@ class Sword(object):
         # CONFIGURE THE SWORD FOR SWINGING UP.
         self.IsSwinging = True
 
-        # The sword will start being vertical (from bottom to top).
+        # The initial position of the sword is always right to make
+        # it easier to calculate the starting/ending angles for rotation.
         self.__FaceRight()
 
-        # The sword will swing counterclockwise from 0 degrees to 90 degrees.
+        # The sword will swing counterclockwise from 270 degrees to 0 degrees.
         self.CurrentRotationAngleInDegrees = 270.0
         self.DestinationRotationAngleInDegrees = 360.0
+
+        # The bounding screen rectangle should be in the bottom-right quadrant
+        # of the image rectangle.
+        self.BoundingScreenRectangle = pygame.Rect(
+            self.HandleScreenPosition.X + Sword.SWORD_LENGTH_IN_PIXELS,
+            self.HandleScreenPosition.Y + Sword.SWORD_LENGTH_IN_PIXELS,
+            Sword.SWORD_LENGTH_IN_PIXELS,
+            Sword.SWORD_LENGTH_IN_PIXELS)
 
     ## Has the sword face right horizontally when rendered within its local image.
     ## \author  Jacob Pike
