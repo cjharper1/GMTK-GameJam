@@ -5,7 +5,8 @@ import pygame
 
 from GameWindow import GameWindow
 from Graphics.LevelMap import LevelMap
-from Utilities.CollisionDetection import HandleCollision
+from Objects.Player import Player
+from Utilities.CollisionDetection import HandleCollision, MoveDirection
 
 ## Handles the main execution of the game.
 ## \author  Michael Watkinson
@@ -53,8 +54,8 @@ class Handler(object):
         # CALCULATE THE FRAMES PER SECOND FOR THE GAME.
         # Limit the game to 60 fps.
         milliseconds_per_second = 1000
-        frames_per_second = 60
-        self.FrameRate = math.floor(milliseconds_per_second/frames_per_second)
+        self.MaxFramesPerSecond = 60
+        self.FrameRate = math.floor(milliseconds_per_second / self.MaxFramesPerSecond)
     
 ## The handler class for controlling a level of the game.
 ## \author  Michael Watkinson
@@ -76,6 +77,10 @@ class LevelHandler(Handler):
         self.GameWindow = game_window
         self.LevelFilepath = level_filepath if level_filepath is not None else '../Maps/Level1.txt'
         self.Map = LevelMap(self.LevelFilepath)
+
+        ## \todo    Remove temporary player creation.
+        player = Player(self.GameWindow.Screen.get_rect().centerx, self.GameWindow.Screen.get_rect().centery)
+        self.Map.Map.append(player)
         
     ## Runs the level and and handles displaying all graphics, playing sounds, and player interaction.
     ## \author  Michael Watkinson
@@ -86,10 +91,15 @@ class LevelHandler(Handler):
         self.BackgroundMusic.play(-1, 0)
     
         # HANDLE INTERACTION.
+        # The clock is used to determine elapsed time between frames.
+        clock = pygame.time.Clock()
         while True:
-            # UPDATE THE SCREEN.
-            self.GameWindow.Update(self.Map)
-            
+            # UPDATE THE GAME CLOCK.
+            # Ticking will automatically delay the game if needed to achieve the desired frame rate.
+            time_since_last_update_in_ms = clock.tick(self.MaxFramesPerSecond)
+            MILLISECONDS_PER_SECOND = 1000
+            time_since_last_update_in_seconds = (time_since_last_update_in_ms / MILLISECONDS_PER_SECOND)
+
             # Set player position and rotation.
             #position = pygame.mouse.get_pos()
             #angle = math.atan2(int(position[1] - (self.PlayerPosition [1])), int(position[0] - self.PlayerPosition [0] + 26))
@@ -99,9 +109,9 @@ class LevelHandler(Handler):
             
             # HANDLE PLAYER INTERACTION.
             self.HandlePlayerInteraction()
-            
-            # WAIT BEFORE UPDATING THE GAME AGAIN.
-            pygame.time.wait(self.FrameRate)
+
+            # UPDATE THE SCREEN.
+            self.GameWindow.Update(self.Map)
            
     ## Handles player input from events, key presses and mouse interaction.
     ## \author  Michael Watkinson
@@ -128,16 +138,16 @@ class LevelHandler(Handler):
         currently_pressed_keys = pygame.key.get_pressed()
         if currently_pressed_keys[pygame.K_w]:
             player.MoveUp()
-            HandleCollision(self.Map, player, MoveDirection.Up)
+            ## \todo    HandleCollision(self.Map, player, MoveDirection.Up)
         if currently_pressed_keys[pygame.K_a]:
             player.MoveLeft()
-            HandleCollision(self.Map, player, MoveDirection.Left)
+            ## \todo    HandleCollision(self.Map, player, MoveDirection.Left)
         if currently_pressed_keys[pygame.K_s]:
             player.MoveDown()
-            HandleCollision(self.Map, player, MoveDirection.Down)
+            ## \todo    HandleCollision(self.Map, player, MoveDirection.Down)
         if currently_pressed_keys[pygame.K_d]:
             player.MoveRight()
-            HandleCollision(self.Map, player, MoveDirection.Right)
+            ## \todo    HandleCollision(self.Map, player, MoveDirection.Right)
                 
         # Check for mouse events.
         #if event.type == pygame.MOUSEBUTTONDOWN:
