@@ -58,6 +58,13 @@ class LevelHandler(StateHandler):
             # HANDLE PLAYER INTERACTION.
             self.HandlePlayerInteraction()
 
+            # UPDATE GAME OBJECTS BASED ON ELAPSED TIME.
+            ## \todo    Update all objects, not just sword.
+            player = self.Map.GetPlayer()
+            # The sword's handle position should follow the player when the player moves.
+            player.Sword.HandleScreenPosition = player.HandScreenPosition
+            player.Sword.Update(time_since_last_update_in_seconds)
+
             # UPDATE THE SCREEN.
             self.GameWindow.Update(self.Map)
            
@@ -65,6 +72,9 @@ class LevelHandler(StateHandler):
     ## \author  Michael Watkinson
     ## \date    09/01/2018
     def HandlePlayerInteraction(self):
+        # GET THE PLAYER OBJECT FROM THE MAP.
+        player = self.Map.GetPlayer()
+        
         # HANDLE QUIT EVENTS.
         for event in pygame.event.get():
             # Check if the X button of the window was clicked.
@@ -73,14 +83,18 @@ class LevelHandler(StateHandler):
                 pygame.quit()
                 sys.exit()
                 
-            # Check if the 
+            # Check if a key was newly pressed down.
             if event.type is pygame.KEYDOWN:
                 if event.key is pygame.K_ESCAPE:
                     sys.exit()
                     pygame.quit()
-
-        # GET THE PLAYER OBJECT FROM THE MAP.
-        player = self.Map.GetPlayer()
+                ## \todo    Do we want space to trigger swinging sword or something else?
+                # Sword swinging is currently handled here (with keyboard events, rather
+                # then just checking currently pressed keys) in order to have sword swinging
+                # only triggered on new key presses, not be trigger when keys are held down.
+                if event.key is pygame.K_SPACE:
+                    # SWING THE PLAYER'S SWORD.
+                    player.SwingSword()
         
         # HANDLE PLAYER MOVEMENT.
         currently_pressed_keys = pygame.key.get_pressed()

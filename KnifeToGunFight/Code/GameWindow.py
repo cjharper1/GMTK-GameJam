@@ -28,6 +28,12 @@ class GameWindow():
         # DRAW ALL OBJECTS IN THE GAME MAP.
         for game_object in game_map.Map.values():
             self.__DrawImage(game_object)
+
+        # RENDER THE PLAYER'S SWORD.
+        # It doesn't fall into the normal game object system.
+        player = game_map.GetPlayer()
+        if player:
+            player.Sword.Render(self.Screen)
         
         # UPDATE THE DISPLAY TO MAKE THE UPDATED OBJECTS VISIBLE.
         pygame.display.update()
