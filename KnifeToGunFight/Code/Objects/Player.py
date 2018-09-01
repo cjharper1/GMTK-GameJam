@@ -12,7 +12,7 @@ class Player(GameObject):
     ## \date    09/01/2018
     def __init__(self, initial_x_position : int, initial_y_position : int):
         GameObject.__init__(self, initial_x_position, initial_y_position)
-        self.__DefaultImage = pygame.image.load('../Images/Player.bmp').convert()
+        self.__DefaultImage = pygame.image.load('../Images/Player.gif').convert()
 
         ## The current image to show for the player. The default image is used until an action occurs
         ## which would change this from the default.
