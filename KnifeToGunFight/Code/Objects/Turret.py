@@ -1,12 +1,14 @@
 import pygame
-from .GameObject import GameObject
 
+from .Enemy import Enemy
 
-class Turret(GameObject):
+## Represents a stationary turret that shoots at the player.
+class Turret(Enemy):
     def __init__(self, initial_x_position, initial_y_position):
-        GameObject.__init__(self, initial_x_position, initial_y_position)
+        Enemy.__init__(self, initial_x_position, initial_y_position)
         self.__DefaultImage = pygame.image.load('../Images/Turret.gif').convert()
 
-        ## The current image to show for the player. The default image is used until an action occurs
-        ## which would change this from the default.
+        ## The default image will be shown upon load because the turret has not performed
+        ## any action yet. 
         self.Image = self.__DefaultImage
+        
