@@ -6,6 +6,7 @@ import pygame
 from Graphics.LevelMap import LevelMap
 from .StateHandler import StateHandler
 from Objects.Player import Player
+from Objects.Turret import Turret
 from Utilities.CollisionDetection import HandleCollision, MoveDirection
 from Utilities.CollisionDetection import HandleCollision, MoveDirection
 
@@ -65,6 +66,29 @@ class LevelHandler(StateHandler):
             player.Sword.HandleScreenPosition = player.HandScreenPosition
             player.Sword.Update(time_since_last_update_in_seconds)
 
+            # HANDLE SWORD COLLISIONS IF THE SWORD IS OUT.
+            if player.Sword.IsSwinging:
+                # CHECK FOR COLLISIONS OF THE SWORD WITH OTHER GAME OBJECTS.
+                for grid_coordinates, game_object in self.Map.Map.items():
+                    # CHECK FOR COLLISIONS WITH PROJECTILES.
+                    ## \todo    Switch this to projectiles in order to deflect them.
+                    ## Turrets are just used now for testing.
+                    if isinstance(game_object, Turret):
+                        # DETERMINE IF THE SWORD HIT THE PROJECTILE.
+                        sword_bounding_rectangle = player.Sword.BoundingScreenRectangle
+                        projectile_rectangle = game_object.Coordinates
+                        sword_collides_with_projectile = sword_bounding_rectangle.colliderect(projectile_rectangle)
+                        if sword_collides_with_projectile:
+                            ## \todo    Remove debug message.  A debug rectangle would be drawn instead,
+                            ## but it's not easy to do that right now since all rendering is encapsulated
+                            ## in GameWindow.Update().
+                            projectile_debug_message = f'Collided @ time {pygame.time.get_ticks()} with {projectile_rectangle}.'
+                            print(projectile_debug_message)
+
+                            # REFLECT THE PROJECTILE.
+                            ## \todo    Implement reflection!
+
+
             # UPDATE THE SCREEN.
             self.GameWindow.Update(self.Map)
            
@@ -74,7 +98,7 @@ class LevelHandler(StateHandler):
     def HandlePlayerInteraction(self):
         # GET THE PLAYER OBJECT FROM THE MAP.
         player = self.Map.GetPlayer()
-        
+
         # HANDLE QUIT EVENTS.
         for event in pygame.event.get():
             # Check if the X button of the window was clicked.
