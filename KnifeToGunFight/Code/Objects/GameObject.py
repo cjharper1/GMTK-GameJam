@@ -23,18 +23,13 @@ class GameObject(object):
     def BottomRightCornerPosition(self):
         return self.Coordinates.bottomright
 
-    ## \todo    Figure out what to do about row/column positions so that default 0 values aren't used here.
-    ## Can the row/column indices be removed?
-    def __init__(self, initial_top_left_x_position, initial_top_left_y_position, row_index = 0, column_index = 0):
+    def __init__(self, initial_top_left_x_position, initial_top_left_y_position):
         # Create a rectangle object to store the coordinates.
         self.Coordinates = pygame.Rect(
             initial_top_left_x_position,
             initial_top_left_y_position,
             self.WidthPixels,
             self.HeightPixels)
-
-        self.RowIndex = row_index
-        self.ColumnIndex = column_index
 
     ## Moves the game object.
     ## \param[in]   x_movement_in_pixels - The number of pixels to move along the x axis.

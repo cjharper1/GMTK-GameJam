@@ -12,5 +12,5 @@ class Wall(GameObject):
     ## \date    09/01/2018
     def __init__(self, x_position, y_position):
         GameObject.__init__(self, x_position, y_position)
-        self.Image = pygame.image.load('../Images/Wall.bmp').convert()
+        self.Image = pygame.image.load('../Images/Wall.gif').convert()
     

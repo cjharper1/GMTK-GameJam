@@ -78,10 +78,6 @@ class LevelHandler(Handler):
         self.LevelFilepath = level_filepath if level_filepath is not None else '../Maps/Level1.txt'
         self.Map = LevelMap(self.LevelFilepath)
 
-        ## \todo    Remove temporary player creation.
-        player = Player(self.GameWindow.Screen.get_rect().centerx, self.GameWindow.Screen.get_rect().centery)
-        self.Map.Map.append(player)
-        
     ## Runs the level and and handles displaying all graphics, playing sounds, and player interaction.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
@@ -138,16 +134,16 @@ class LevelHandler(Handler):
         currently_pressed_keys = pygame.key.get_pressed()
         if currently_pressed_keys[pygame.K_w]:
             player.MoveUp()
-            ## \todo    HandleCollision(self.Map, player, MoveDirection.Up)
+            HandleCollision(self.Map, player, MoveDirection.Up)
         if currently_pressed_keys[pygame.K_a]:
             player.MoveLeft()
-            ## \todo    HandleCollision(self.Map, player, MoveDirection.Left)
+            HandleCollision(self.Map, player, MoveDirection.Left)
         if currently_pressed_keys[pygame.K_s]:
             player.MoveDown()
-            ## \todo    HandleCollision(self.Map, player, MoveDirection.Down)
+            HandleCollision(self.Map, player, MoveDirection.Down)
         if currently_pressed_keys[pygame.K_d]:
             player.MoveRight()
-            ## \todo    HandleCollision(self.Map, player, MoveDirection.Right)
+            HandleCollision(self.Map, player, MoveDirection.Right)
                 
         # Check for mouse events.
         #if event.type == pygame.MOUSEBUTTONDOWN:

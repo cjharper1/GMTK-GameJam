@@ -2,6 +2,7 @@ from enum import Enum
 
 import pygame
 
+from Objects.Turret import Turret
 from Objects.Wall import Wall
 
 ## A mapping of move directions to the relevant coordinates to check for collision.
@@ -28,7 +29,7 @@ def HandleCollision(level_map, game_object, move_direction):
     
     # HANDLE NORMAL COLLISION.
     # The GameObjects will just be moved to the closest pixel to the object they collided with.
-    if (isinstance(colliding_object, (Wall))):
+    if (isinstance(colliding_object, (Wall, Turret))):
         HandleNormalCollision(game_object, colliding_object, coordinates, move_direction)
    
 ## \param[in]   level_map - The GameMap object containing all of the game objects.

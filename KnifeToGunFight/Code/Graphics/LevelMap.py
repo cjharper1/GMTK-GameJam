@@ -1,20 +1,37 @@
 # Class for displaying the map of a level.
-from Objects import GameObject
+from Objects.GameObject import GameObject
 from Objects.Player import Player
+from Objects.Wall import Wall
+from Objects.Turret import Turret
+
+
+# A mapping of ASCII character map objects to game object classes.
+class GameObjectMapping(object):
+    @staticmethod
+    def buildObject(ascii_object, y_position, x_position):
+        if ascii_object == 'P':
+            return Player(y_position, x_position)
+        if ascii_object == 'X':
+            return Wall(y_position, x_position)
+        if ascii_object == 'T':
+            return Turret(y_position, x_position)
+        else:
+            return None
 
 class LevelMap(object):
-    def __init__(self, currentLevel):
+    def __init__(self, currentLevelFilePath):
         # Define the path to the current level.
-        self.LevelMapFilepath = f'Maps/Level{currentLevel}.txt'
+        self.LevelMapFilepath = currentLevelFilePath
 
         # The height and width of the map.
         self.MapWidth = 0
-        self.MapHeight = 0
-
-        # A list of game objects that make up the map.
-        self.Map = []
+        ## The map containing all of the game objects as a dictionary.  The key of the dictionary is
+        ## a two-tuple of the coordinates of the block the object is currently occupying and the
+        ## value is the object.
+        self.Map = {}
 
         # Build the map.
+        self.ParseMap()
 
     # Opens up the file for the map of the given level and builds the game objects and map.
     def ParseMap(self):
@@ -30,10 +47,8 @@ class LevelMap(object):
         self.MapWidth = len(max(map_rows, key = len))
 
         # Loop through the file and create game objects for the map.
-        current_pixel_row_position = 0
-        current_pixel_column_position = 0
         for row_index, row in enumerate(map_rows):
-            # Calculate the starting pixesl position for objects in the current row.
+            # Calculate the starting pixels position for objects in the current row.
             y_position = (row_index * GameObject.HeightPixels)
 
             # Parse the current row into game objects.
@@ -42,16 +57,19 @@ class LevelMap(object):
                 x_position = (column_index * GameObject.WidthPixels)
 
                 # Create the GameObject and add it to the map
-                object = GameObject(y_position, x_position, row_index, column_index)
-                self.Map.append(object)
-                
+                mappedObject = GameObjectMapping.buildObject(ascii_object, x_position, y_position)
+
+                if mappedObject is not None:
+                    self.Map[(row_index, column_index)] = mappedObject
+
+
     ## Gets the player object from the game map.
     ## \return  The Player object.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
     def GetPlayer(self):
         # SEARCH THROUGH ALL THE OBJECTS IN THE MAP FOR THE PLAYER OBJECT.
-        for object in self.Map:
+        for object in self.Map.values():
             # Check if the current object is the player.
             player_found = (isinstance(object, Player))
             if player_found:
