@@ -3,9 +3,9 @@ from KnifeToGunFight.Code.Objects import GameObject
 
 
 class LevelMap(object):
-    def __init__(self, currentLevel):
+    def __init__(self, currentLevelFilePath):
         # Define the path to the current level.
-        self.LevelMapFilepath = f'Maps/Level{currentLevel}.txt'
+        self.LevelMapFilepath = currentLevelFilePath
 
         # The height and width of the map.
         self.MapWidth = 0
@@ -33,7 +33,7 @@ class LevelMap(object):
         current_pixel_row_position = 0
         current_pixel_column_position = 0
         for row_index, row in enumerate(map_rows):
-            # Calculate the starting pixesl position for objects in the current row.
+            # Calculate the starting pixels position for objects in the current row.
             y_position = (row_index * GameObject.HeightPixels)
 
             # Parse the current row into game objects.
