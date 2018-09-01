@@ -10,8 +10,8 @@ class Player(GameObject):
     ## \param[in]   initial_y_position - The initial Y position of the character with respect to the game world.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
-    def __init__(self, initial_x_position : int, initial_y_position : int):
-        GameObject.__init__(self, initial_x_position, initial_y_position)
+    def __init__(self, initial_x_position : int, initial_y_position : int, row_index, column_index):
+        GameObject.__init__(self, initial_x_position, initial_y_position, row_index, column_index)
         self.__DefaultImage = pygame.image.load('../Images/Player.bmp').convert()
 
         ## The current image to show for the player. The default image is used until an action occurs

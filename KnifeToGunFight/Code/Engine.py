@@ -78,10 +78,6 @@ class LevelHandler(Handler):
         self.LevelFilepath = level_filepath if level_filepath is not None else '../Maps/Level1.txt'
         self.Map = LevelMap(self.LevelFilepath)
 
-        ## \todo    Remove temporary player creation.
-        player = Player(self.GameWindow.Screen.get_rect().centerx, self.GameWindow.Screen.get_rect().centery)
-        self.Map.Map.append(player)
-        
     ## Runs the level and and handles displaying all graphics, playing sounds, and player interaction.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
