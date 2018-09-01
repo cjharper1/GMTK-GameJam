@@ -1,7 +1,7 @@
 import pygame
 
 from GameWindow import GameWindow
-from StateHandlers.LevelHandler import LevelHandler
+from StateHandlers.MainMenuHandler import MainMenuHandler
 
 ## Handles the main execution of the game.
 ## \author  Michael Watkinson
@@ -15,7 +15,7 @@ def RunGame():
     pygame.mixer.init()
 
     # ENTER THE GAME MAIN LOOP.
-    current_state = LevelHandler(game_window)
+    current_state = MainMenuHandler(game_window)
     while True:
         # HANDLE THE CURRENT STATE OF THE GAME.
         current_state = current_state.Run()

@@ -1,6 +1,7 @@
 import pygame
 
 from .StateHandler import StateHandler
+from .LevelHandler import LevelHandler
 
 
 class MainMenuHandler(StateHandler):
@@ -23,9 +24,7 @@ class MainMenuHandler(StateHandler):
         clock = pygame.time.Clock()
         useWithoutPressAnyKeyText = False
         while True:
-            MILLISECONDS_PER_SECOND = 1000
-            time_since_last_update_in_ms = clock.tick(self.MaxFramesPerSecond)
-            time_since_last_update_in_seconds = (time_since_last_update_in_ms / MILLISECONDS_PER_SECOND)
+            clock.tick(2)
 
             if useWithoutPressAnyKeyText:
                 self.GameWindow.Screen.blit(self.MainMenuWithPressAnyKeyText, [0, 0])
@@ -36,5 +35,8 @@ class MainMenuHandler(StateHandler):
 
             # UPDATE THE DISPLAY TO MAKE THE UPDATED OBJECTS VISIBLE.
             pygame.display.update()
-            pygame.time.wait(500)
+
+            for event in pygame.event.get():
+                if event.type is pygame.KEYDOWN:
+                    return LevelHandler(self.GameWindow)
 
