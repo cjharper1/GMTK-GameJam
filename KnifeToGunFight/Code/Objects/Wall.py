@@ -10,7 +10,7 @@ class Wall(GameObject):
     ## \param[in]   y_position - The y position of the wall.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
-    def __init__(self, x_position, y_position, row_index, column_index):
-        GameObject.__init__(self, x_position, y_position, row_index, column_index)
+    def __init__(self, x_position, y_position):
+        GameObject.__init__(self, x_position, y_position)
         self.Image = pygame.image.load('../Images/Wall.bmp').convert()
     

@@ -134,16 +134,16 @@ class LevelHandler(Handler):
         currently_pressed_keys = pygame.key.get_pressed()
         if currently_pressed_keys[pygame.K_w]:
             player.MoveUp()
-            ## \todo    HandleCollision(self.Map, player, MoveDirection.Up)
+            HandleCollision(self.Map, player, MoveDirection.Up)
         if currently_pressed_keys[pygame.K_a]:
             player.MoveLeft()
-            ## \todo    HandleCollision(self.Map, player, MoveDirection.Left)
+            HandleCollision(self.Map, player, MoveDirection.Left)
         if currently_pressed_keys[pygame.K_s]:
             player.MoveDown()
-            ## \todo    HandleCollision(self.Map, player, MoveDirection.Down)
+            HandleCollision(self.Map, player, MoveDirection.Down)
         if currently_pressed_keys[pygame.K_d]:
             player.MoveRight()
-            ## \todo    HandleCollision(self.Map, player, MoveDirection.Right)
+            HandleCollision(self.Map, player, MoveDirection.Right)
                 
         # Check for mouse events.
         #if event.type == pygame.MOUSEBUTTONDOWN:

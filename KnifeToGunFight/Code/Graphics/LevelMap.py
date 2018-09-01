@@ -8,13 +8,13 @@ from Objects.Turret import Turret
 # A mapping of ASCII character map objects to game object classes.
 class GameObjectMapping(object):
     @staticmethod
-    def buildObject(ascii_object, y_position, x_position, row_index, column_index):
+    def buildObject(ascii_object, y_position, x_position):
         if ascii_object == 'P':
-            return Player(y_position, x_position, row_index, column_index)
+            return Player(y_position, x_position)
         if ascii_object == 'X':
-            return Wall(y_position, x_position, row_index, column_index)
+            return Wall(y_position, x_position)
         if ascii_object == 'T':
-            return Turret(y_position, x_position, row_index, column_index)
+            return Turret(y_position, x_position)
         else:
             return None
 
@@ -57,7 +57,7 @@ class LevelMap(object):
                 x_position = (column_index * GameObject.WidthPixels)
 
                 # Create the GameObject and add it to the map
-                mappedObject = GameObjectMapping.buildObject(ascii_object, x_position, y_position, row_index, column_index)
+                mappedObject = GameObjectMapping.buildObject(ascii_object, x_position, y_position)
 
                 if mappedObject is not None:
                     self.Map[(row_index, column_index)] = mappedObject
