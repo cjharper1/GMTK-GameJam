@@ -69,7 +69,7 @@ class LevelMap(object):
     ## \date    09/01/2018
     def GetPlayer(self):
         # SEARCH THROUGH ALL THE OBJECTS IN THE MAP FOR THE PLAYER OBJECT.
-        for object in self.Map:
+        for object in self.Map.values():
             # Check if the current object is the player.
             player_found = (isinstance(object, Player))
             if player_found:
