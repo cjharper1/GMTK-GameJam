@@ -8,7 +8,7 @@ class MainMenuHandler(StateHandler):
     def __init__(self, game_window):
         # INITIALIZE THE HANDLER.
         audio = {
-            'BackgroundMusic': '../Audio/background_music.wav'}
+            'BackgroundMusic': '../Audio/background_music_old.wav'}
         images = {
             'MainMenuWithPressAnyKeyText': '../Images/MainMenuWithPressAnyKeyText.gif',
             'MainMenuWithoutPressAnyKeyText': '../Images/MainMenuWithoutPressAnyKeyText.gif'}
