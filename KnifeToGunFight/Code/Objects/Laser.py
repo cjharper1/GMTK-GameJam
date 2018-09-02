@@ -3,6 +3,7 @@ import math
 import pygame
 
 from .GameObject import GameObject
+from Math.Vector2 import Vector2
 
 ## Represents a laser shot by an enemy unit.
 ## \author  CJ Harper
@@ -50,10 +51,15 @@ class Laser(GameObject):
         self.Image = pygame.transform.rotate(pygame.image.load(self.LASER_IMAGE_PER_COLOR[color]).convert(), degrees_of_rotation)
 
     ## Updates the state of the laser.
+    ## \param[in]   time_since_last_update_in_seconds - The time since the laser was last
+    ##      updated, in seconds.
     ## \author  CJ Harper
     ## \date    09/01/2018
-    def Update(self):
-        self.Move(self.Trajectory.X, self.Trajectory.Y)
+    def Update(self, time_since_last_update_in_seconds):
+        MOVE_SPEED_IN_PIXELS_PER_SECOND = 200
+        movement_distance_in_pixels = MOVE_SPEED_IN_PIXELS_PER_SECOND * time_since_last_update_in_seconds
+        movement_amount_in_pixels = Vector2.Scale(movement_distance_in_pixels, self.Trajectory)
+        self.Coordinates = self.Coordinates.move(movement_amount_in_pixels.X, movement_amount_in_pixels.Y)
 
     ## Reflects the projectile.
     ## \author  CJ Harper

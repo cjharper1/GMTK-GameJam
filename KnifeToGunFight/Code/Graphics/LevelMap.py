@@ -1,4 +1,5 @@
-# Class for displaying the map of a level.
+import pygame
+
 from Objects.GameObject import GameObject
 from Objects.Enemy import Enemy
 from Objects.LittleRobot import LittleRobot
@@ -24,6 +25,7 @@ class GameObjectMapping(object):
         else:
             return None
 
+# Class for displaying the map of a level.
 class LevelMap(object):
     def __init__(self, currentLevelFilePath):
         # Define the path to the current level.
@@ -116,6 +118,21 @@ class LevelMap(object):
         grid_column_index = int(x_coordinate / GameObject.WidthPixels)
         return (grid_column_index, grid_row_index)
                 
+    ## Checks if a given game object is within bounds of the map.
+    ## \param[in]   game_object - The GameObject to check.
+    ## \return  True if the object is in bounds; false otherwise.
+    ## \author  Jacob Pike
+    ## \date    09/02/2018
+    def ObjectInBounds(self, game_object):
+        # DEFINE A BOUNDING RECTANGLE FOR THE MAP.
+        map_max_x_screen_position = self.MapWidth * GameObject.WidthPixels
+        map_max_y_screen_position = self.MapHeight * GameObject.HeightPixels
+        map_bounding_rectangle = pygame.Rect(0, 0, map_max_x_screen_position, map_max_y_screen_position)
+        
+        # CHECK OF THE GAME OBJECT IS WITHIN BOUNDS.
+        object_in_bounds = map_bounding_rectangle.colliderect(game_object.Coordinates)
+        return object_in_bounds
+
     ## Moves the specified GameObject to a new grid position.
     ## \param[in]   game_object - The GameObject to move.
     ## \author  Michael Watkinson

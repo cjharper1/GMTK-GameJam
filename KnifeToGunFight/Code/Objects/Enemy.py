@@ -11,6 +11,32 @@ class Enemy(GameObject):
     def __init__(self, initial_x_position, initial_y_position, speed = 0):
         GameObject.__init__(self, initial_x_position, initial_y_position, speed = speed)
 
+        ## The amount of time elapsed since the last shot in seconds.
+        self.TimeElapsedSinceLastShotInSeconds = 0
+
+    ## Tries shooting the player.
+    ## Shooting is capped to avoid overloading the player with too many lasers.
+    ## \param[in]   time_since_last_update_in_seconds - The time since the last enemy update, in seconds.
+    ## \param[in]   player - The player to shoot at.
+    ## \return  A Laser, if shot; None otherwise.
+    ## \author  Jacob Pike
+    ## \date    09/02/2018
+    def TryShooting(self, time_since_last_update_in_seconds, player : GameObject, game_map):
+        # CHECK IF SUFFICIENT TIME HAS ELAPSED SINCE THE LAST SHOT AT THE PLAYER.
+        MIN_TIME_BETWEEN_SHOTS_IN_SECONDS = 3
+        self.TimeElapsedSinceLastShotInSeconds += time_since_last_update_in_seconds
+        long_enough_since_last_shot = (self.TimeElapsedSinceLastShotInSeconds >= MIN_TIME_BETWEEN_SHOTS_IN_SECONDS)
+        if not long_enough_since_last_shot:
+            return
+
+        # RANDOMLY CHOOSE TO SHOOT THE PLAYER OR NOT.
+        shoot_player = random.choice([True, False])
+        if shoot_player:
+            laser = self.Shoot(player)
+            return laser
+        else:
+            return None
+
     ## Shoot at the player.
     ## \param[in]   player - The player to shoot at.
     ## \return  The shot laser.
@@ -18,32 +44,18 @@ class Enemy(GameObject):
     ## \date    09/01/2018
     def Shoot(self, player):
         # CALCULATE THE TRAJECTORY TO THE PLAYER.
-        # The trajectory is the amount of pixels an object will move each game update in
-        # both the x and y position.
-        # This is calculated by determining the slope between the enemy and the player.
-        # slope = (y_player - y_enemy / x_player - x_enemy).
-        # The trajectory would then be 1 x-pixel per slope y-pixels.
-        x_distance_to_player = (player.Coordinates.centerx - self.Coordinates.centerx)
-        y_distance_to_player = (player.Coordinates.centery - self.Coordinates.centery)
-        slope = (y_distance_to_player / x_distance_to_player)
-        
-        # DETERMINE WHETHER THE ENEMY WILL OVERSHOOT OR UNDERSHOOT.
-        # The slope may not divide into an integer number of pixels which would be impossible
-        # to represent in game. Therefore, the slope needs to be rounded up or down. Always rounding the same
-        # direction would end up being predictable since the enemy would always shoot to the left or
-        # right of the player. The rounding will be determined randomly so the player cannot predict
-        # whether the shot will be to the left or right.
-        random_result = random.randint(0, 1)
-        ROUND_UP_RANDOM_RESULT = 1
-        round_up = (random_result == ROUND_UP_RANDOM_RESULT)
-        if round_up:
-            slope = math.ceil(slope)
-        else:
-            slope = math.floor(slope)
-        trajectory_to_player = Vector2(1, slope)
+        enemy_position = Vector2(self.Coordinates.centerx, self.Coordinates.centery)
+        player_position = Vector2(player.Coordinates.centerx, player.Coordinates.centery)
+        trajectory_to_player = Vector2.Subtract(player_position, enemy_position)
+
+        # The trajectory should be normalized to have it just represent the direction.
+        # The laser can independently control the speed at which it moves.
+        trajectory_to_player = Vector2.Normalize(trajectory_to_player)
 
         # GENERATE A LASER AND FIRE IT TOWARDS THE PLAYER.
         laser = Laser(self.Coordinates.centerx, self.Coordinates.centery, Laser.Color.Red, trajectory_to_player)
 
+        # INDICATE THAT A SHOT WAS JUST FIRED.
+        self.TimeElapsedSinceLastShotInSeconds = 0
         return laser
 

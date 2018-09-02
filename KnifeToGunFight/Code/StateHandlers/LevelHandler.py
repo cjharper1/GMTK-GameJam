@@ -74,12 +74,21 @@ class LevelHandler(StateHandler):
                 return LevelHandler(self.GameWindow, next_level_filepath)
             
             # ALLOW ENEMIES TO REACT TO THE PLAYER.
-            self.UpdateEnemies()
+            self.UpdateEnemies(time_since_last_update_in_seconds)
 
-            # UPDATE GAME OBJECTS.
+            # UPDATE THE TELEPORTER.
             teleporter = self.Map.GetTeleporter()
             if teleporter is not None:
                 teleporter.Update(time_since_last_update_in_seconds)
+
+            # UPDATE THE LASERS.
+            for laser in self.Map.Lasers:
+                laser.Update(time_since_last_update_in_seconds)
+
+            # Any lasers that are no longer in bounds should be removed.
+            self.Map.Lasers = [laser for laser in self.Map.Lasers if self.Map.ObjectInBounds(laser)]
+
+            # UPDATE THE PLAYER.
             player = self.Map.GetPlayer()
             if player is not None:
                 player.Update()
@@ -90,17 +99,15 @@ class LevelHandler(StateHandler):
 
                 # HANDLE SWORD COLLISIONS IF THE SWORD IS OUT.
                 if player.Sword.IsSwinging:
-                    # CHECK FOR COLLISIONS OF THE SWORD WITH OTHER GAME OBJECTS.
-                    for grid_coordinates, game_object in self.Map.Map.items():
-                        # CHECK FOR COLLISIONS WITH PROJECTILES.
-                        if isinstance(game_object, Laser):
-                            # DETERMINE IF THE SWORD HIT THE PROJECTILE.
-                            sword_bounding_rectangle = player.Sword.BoundingScreenRectangle
-                            projectile_rectangle = game_object.Coordinates
-                            sword_collides_with_projectile = sword_bounding_rectangle.colliderect(projectile_rectangle)
-                            if sword_collides_with_projectile:
-                                # REFLECT THE PROJECTILE.
-                                game_object.Reflect()
+                    # CHECK FOR COLLISIONS OF THE SWORD WITH LASERS.
+                    for laser in self.Map.Lasers:
+                        # DETERMINE IF THE SWORD HIT THE PROJECTILE.
+                        sword_bounding_rectangle = player.Sword.BoundingScreenRectangle
+                        projectile_rectangle = laser.Coordinates
+                        sword_collides_with_projectile = sword_bounding_rectangle.colliderect(projectile_rectangle)
+                        if sword_collides_with_projectile:
+                            # REFLECT THE PROJECTILE.
+                            laser.Reflect()
 
             # UPDATE THE SCREEN.
             self.GameWindow.Update(self.Map)
@@ -162,24 +169,19 @@ class LevelHandler(StateHandler):
         return collided_with_teleporter
 
     ## Causes enemies to move, shoot, or perform other actions.
+    ## \param[in]   time_since_last_update_in_seconds - The time since the last enemy update, in seconds.
     ## \author  Tom Rogan
     ## \date    09/01/2018
-    def UpdateEnemies(self):
+    def UpdateEnemies(self, time_since_last_update_in_seconds):
         # UPDATE EACH ENEMY.
         player = self.Map.GetPlayer()
         player_position = self.Map.GetGridPosition(player.TopLeftCornerPosition)
         player_position_vector = Vector2(player_position[0], player_position[1])
         enemies = self.Map.GetEnemies()
         for enemy in enemies:
-            # SHOOT AT THE PLAYER.
-            # This will be a random chance so the robots aren't shooting every frame.
-            shoot_roll = random.randint(1, 100)
-            PERCENTAGE_CHANCE_TO_SHOOT_PLAYER = 10
-            enemy_shoot = (shoot_roll <= PERCENTAGE_CHANCE_TO_SHOOT_PLAYER)
-            if enemy_shoot:
-                laser = enemy.Shoot(player)
-
-                # Add the laser to the game map.
+            # RANDOMLY SHOOT AT THE PLAYER.
+            laser = enemy.TryShooting(time_since_last_update_in_seconds, player, self.Map)
+            if laser:
                 self.Map.Lasers.append(laser)
 
             # MOVE IF NON-STATIONARY.
