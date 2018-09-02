@@ -55,6 +55,9 @@ class Enemy(GameObject):
         # GENERATE A LASER AND FIRE IT TOWARDS THE PLAYER.
         laser = Laser(self.Coordinates.centerx, self.Coordinates.centery, Laser.Color.Red, trajectory_to_player)
 
+        # Move the laser closer to the player so that it doesn't hit the wall when it spawns.
+        laser.Update(0.2)
+        
         # INDICATE THAT A SHOT WAS JUST FIRED.
         self.TimeElapsedSinceLastShotInSeconds = 0
         return laser

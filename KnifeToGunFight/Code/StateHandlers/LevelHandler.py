@@ -73,7 +73,12 @@ class LevelHandler(StateHandler):
             # HANDLE PLAYER INTERACTION.
             # This must be performed after updating the teleporter because when the player walks into the teleporter
             # it will be removed from the map since two objects cannot occupy the same space.
-            collided_with_teleporter = self.HandlePlayerInteraction(teleporter_activated)
+            collided_with_teleporter, player_alive = self.HandlePlayerInteraction(teleporter_activated)
+            
+            # Check if the player is still alive.
+            # If not, return to Level 1.
+            if not player_alive:
+                return LevelHandler(self.GameWindow, '../Maps/Level1.txt')
             
             # Check if we should move to the next level.
             move_to_next_level = (collided_with_teleporter and teleporter_activated)
@@ -92,6 +97,17 @@ class LevelHandler(StateHandler):
             # UPDATE THE LASERS.
             for laser in self.Map.Lasers:
                 laser.Update(time_since_last_update_in_seconds)
+                
+                # Remove lasers that are hitting a wall.
+                walls = self.Map.GetWalls()
+                for wall in walls:
+                    laser_hit_wall = wall.Coordinates.colliderect(laser.Coordinates)
+                    if laser_hit_wall:
+                        # REMOVE THE LASER FROM THE MAP.
+                        try:
+                            self.Map.Lasers.remove(laser)
+                        except:
+                            pass
                 
             # Any lasers that are no longer in bounds should be removed.
             self.Map.Lasers = [laser for laser in self.Map.Lasers if self.Map.ObjectInBounds(laser)]
@@ -122,7 +138,7 @@ class LevelHandler(StateHandler):
            
     ## Handles player input from events, key presses and mouse interaction.
     ## \param[in]  teleporter_activated - A boolean to determine if the player can us the teleporter.
-    ## \return  True if the player used the teleporter; False otherwise.
+    ## \return  A two-tuple of booleans for whether or not the player used the teleporter and if the player is alive.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
     def HandlePlayerInteraction(self, teleporter_activated):
@@ -174,12 +190,15 @@ class LevelHandler(StateHandler):
                 # REMOVE THE LASER FROM THE MAP.
                 self.Map.Lasers.remove(laser)
 
-                # DEAL DAMAGE TO PLAYER.
-                # \todo implement this.
+                # RESET TO LEVEL ONE ON PLAYER DEATH.
+                collided_with_teleporter = False
+                player_alive = False
+                return (collided_with_teleporter, player_alive)
             
         # HANDLE USING TELEPORTER.
         collided_with_teleporter = isinstance(collided_object, Teleporter)
-        return collided_with_teleporter
+        player_alive = True
+        return (collided_with_teleporter, player_alive)
 
     ## Causes enemies to move, shoot, or perform other actions.
     ## \param[in]   time_since_last_update_in_seconds - The time since the last enemy update, in seconds.
