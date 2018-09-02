@@ -1,20 +1,9 @@
 import pygame
 
-from .GameObject import GameObject
+from Objects.GameObject import GameObject
 
 ## Represents a teleporter that will take you to the next level. 
 class Teleporter(GameObject):
-    ## The images a teleporter cycles through.
-    IMAGES = \
-    [
-        pygame.image.load('../Images/Teleporter1.gif').convert(),
-        pygame.image.load('../Images/Teleporter2.gif').convert(),
-        pygame.image.load('../Images/Teleporter3.gif').convert(),
-        pygame.image.load('../Images/Teleporter4.gif').convert(),
-        pygame.image.load('../Images/Teleporter5.gif').convert(),
-        pygame.image.load('../Images/Teleporter6.gif').convert()
-    ]
-
     ## The number of frames to display each image in the teleporter animation.
     FRAMES_TO_DISPLAY_EACH_IMAGE = 10
 
@@ -25,6 +14,16 @@ class Teleporter(GameObject):
     ## \date    09/01/2018
     def __init__(self, x_position, y_position):
         GameObject.__init__(self, x_position, y_position)
+
+        self.IMAGES = \
+        [
+            pygame.image.load('../Images/Teleporter1.gif').convert(),
+            pygame.image.load('../Images/Teleporter2.gif').convert(),
+            pygame.image.load('../Images/Teleporter3.gif').convert(),
+            pygame.image.load('../Images/Teleporter4.gif').convert(),
+            pygame.image.load('../Images/Teleporter5.gif').convert(),
+            pygame.image.load('../Images/Teleporter6.gif').convert()
+        ]
 
         ## Set the initial image of the teleporter.
         self.Image = self.IMAGES[0]

@@ -9,13 +9,13 @@ from Objects.Teleporter import Teleporter
 # A mapping of ASCII character map objects to game object classes.
 class GameObjectMapping(object):
     @staticmethod
-    def buildObject(ascii_object, y_position, x_position):
+    def buildObject(ascii_object, x_position, y_position):
         if ascii_object == 'P':
-            return Player(y_position, x_position)
+            return Player(x_position, y_position)
         if ascii_object == 'X':
-            return Wall(y_position, x_position)
+            return Wall(x_position, y_position)
         if ascii_object == 'T':
-            return Turret(y_position, x_position)
+            return Turret(x_position, y_position)
         if ascii_object == 'D':
             return Teleporter(x_position, y_position)
         else:
