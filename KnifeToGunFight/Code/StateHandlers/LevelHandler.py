@@ -133,13 +133,13 @@ class LevelHandler(StateHandler):
                 if event.key is pygame.K_ESCAPE:
                     sys.exit()
                     pygame.quit()
+            elif event.type is pygame.MOUSEBUTTONDOWN:
                 ## \todo    Do we want space to trigger swinging sword or something else?
                 # Sword swinging is currently handled here (with keyboard events, rather
                 # then just checking currently pressed keys) in order to have sword swinging
                 # only triggered on new key presses, not be trigger when keys are held down.
-                if event.key is pygame.K_SPACE:
-                    # SWING THE PLAYER'S SWORD.
-                    player.SwingSword()
+                # SWING THE PLAYER'S SWORD.
+                player.SwingSword()
         
         # HANDLE PLAYER MOVEMENT.
         collided_object = None

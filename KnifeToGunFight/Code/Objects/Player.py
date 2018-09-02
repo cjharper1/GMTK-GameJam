@@ -92,14 +92,46 @@ class Player(GameObject):
 
         # 90 degrees is subtracted from the rotation since the image spawns facing upward (i.e. rotated 90 degrees from the x-axis)
         # and the arctan function calculates rotation as if the image spawned facing the x-axis.
-        degrees_of_rotation -= 90
+        degrees_of_rotation_relative_to_image_facing_up = degrees_of_rotation - 90
 
         # The default image is rotated every time because continuing to rotate the same image
         # over and over will result in degradation of image quality.
-        self.Image = pygame.transform.rotate(self.__DefaultImage, degrees_of_rotation)
+        self.Image = pygame.transform.rotate(self.__DefaultImage, degrees_of_rotation_relative_to_image_facing_up)
+
+        # UPDATE THE PLAYER'S FACING DIRECTION.
+        # This needs to be updated to try and keep the sword in front of the player.
+        # This can be done by looking at the rotated orientation of the player
+        # and approximating which of the 4 cardinal directions fit best
+        # (reference a unit circle diagram).  The degrees are normalized to
+        # fit within a range of [0, 360] to simplify these checks.
+        MAX_DEGREES_IN_CIRCLE = 360
+        normalized_degrees_of_rotation = degrees_of_rotation % MAX_DEGREES_IN_CIRCLE
+        degrees_of_rotation_negative = (normalized_degrees_of_rotation < 0)
+        if degrees_of_rotation_negative:
+            normalized_degrees_of_rotation += MAX_DEGREES_IN_CIRCLE
+        facing_up = (45 <= normalized_degrees_of_rotation) and (normalized_degrees_of_rotation <= 135)
+        facing_down = (225 <= normalized_degrees_of_rotation) and (normalized_degrees_of_rotation <= 315)
+        facing_left = (135 <= normalized_degrees_of_rotation) and (normalized_degrees_of_rotation <= 225)
+        # Note that it's important for this "facing right" check to come last
+        # because this is where the degrees of the circle wrap around, meaning
+        # an "or" check is necessary.  Alternatively, we could complicate this
+        # condition by adding in additional checks for around 360 or 0 degrees.
+        facing_right = (315 <= normalized_degrees_of_rotation) or (normalized_degrees_of_rotation <= 45)
+        if facing_up:
+            self.FacingDirection = MoveDirection.Up
+        elif facing_down:
+            self.FacingDirection = MoveDirection.Down
+        elif facing_left:
+            self.FacingDirection = MoveDirection.Left
+        elif facing_right:
+            self.FacingDirection = MoveDirection.Right
 
         # UPDATE THE PLAYER POSITION.
         # The rotation repositions the character's image slightly so the
         # player's position needs to be updated to account for this.
-        # \todo Figure out why this causes player to get stuck in walls.
+        ## \todo Figure out why this causes player to get stuck in walls.
+        ## Part of the reason for this is likely that rotating an image results
+        ## in the image itself have a larger rectangle to fully encompass the bounds
+        ## of the rotated image.  If you add debug rectangle drawing similar to what
+        ## exists in the Sword class, you could probably see this.
         #self.Coordinates = self.Image.get_rect(center = self.Coordinates.center)
