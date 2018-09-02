@@ -50,6 +50,9 @@ class Laser(GameObject):
         # over and over will result in degradation of image quality.
         self.Image = pygame.transform.rotate(pygame.image.load(self.LASER_IMAGE_PER_COLOR[color]).convert(), degrees_of_rotation)
 
+        ## Indicates whether this laser has been reflected.
+        self.HasBeenReflected = False
+
     ## Updates the state of the laser.
     ## \param[in]   time_since_last_update_in_seconds - The time since the laser was last
     ##      updated, in seconds.
@@ -65,8 +68,14 @@ class Laser(GameObject):
     ## \author  CJ Harper
     ## \date    09/02/2018
     def Reflect(self):
+        # CHECK IF THIS LASER HAS BEEN REFLECTED ALREADY.
+        # Lasers can only be reflected once.
+        if self.HasBeenReflected:
+            return
+
         # REVERSE THE TRAJECTORY OF THE LASER.
         # Multiplying a vector by -1 will make it point in the opposite direction.
         REVERSE_DIRECTION = -1
         self.Trajectory.X = (self.Trajectory.X * REVERSE_DIRECTION)
         self.Trajectory.Y = (self.Trajectory.Y * REVERSE_DIRECTION)
+        self.HasBeenReflected = True
