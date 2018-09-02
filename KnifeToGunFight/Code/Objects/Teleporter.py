@@ -24,7 +24,7 @@ class Teleporter(GameObject):
         GameObject.__init__(self, x_position, y_position)
 
         ## Set the initial image of the teleporter.
-        self.Image = IMAGES[0]
+        self.Image = self.IMAGES[0]
         self.CurrentlyDisplayedImageIndex = 0
 
         
