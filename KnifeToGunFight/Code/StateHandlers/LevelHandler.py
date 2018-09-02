@@ -21,7 +21,7 @@ class LevelHandler(StateHandler):
     def __init__(self, game_window, level_filepath = None):
         # INITIALIZE THE HANDLER.
         audio = {
-            'BackgroundMusic': '../Audio/background_music.wav'}
+            'BackgroundMusic': '../Audio/background_music.mp3'}
         StateHandler.__init__(self, audio = audio)
         
         # INITIALIZE INSTANCE VARIABLES.
