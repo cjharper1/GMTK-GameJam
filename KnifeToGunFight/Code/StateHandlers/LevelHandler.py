@@ -78,7 +78,7 @@ class LevelHandler(StateHandler):
             # Check if the player is still alive.
             # If not, return to Level 1.
             if not player_alive:
-                return LevelHandler(self.GameWindow, '../Maps/Level1.txt')
+                return LevelHandler(self.GameWindow, self.LevelFilepath)
             
             # Check if we should move to the next level.
             move_to_next_level = (collided_with_teleporter and teleporter_activated)
