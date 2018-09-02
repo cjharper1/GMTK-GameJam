@@ -2,6 +2,7 @@ import math
 
 import pygame
 
+from Math.CartesianCoordinateSystem import CartesianCoordinateSystem
 from Math.Vector2 import Vector2
 from Objects.GameObject import GameObject
 from Objects.Sword import Sword
@@ -102,29 +103,11 @@ class Player(GameObject):
         # This needs to be updated to try and keep the sword in front of the player.
         # This can be done by looking at the rotated orientation of the player
         # and approximating which of the 4 cardinal directions fit best
-        # (reference a unit circle diagram).  The degrees are normalized to
-        # fit within a range of [0, 360] to simplify these checks.
-        MAX_DEGREES_IN_CIRCLE = 360
-        normalized_degrees_of_rotation = degrees_of_rotation % MAX_DEGREES_IN_CIRCLE
-        degrees_of_rotation_negative = (normalized_degrees_of_rotation < 0)
-        if degrees_of_rotation_negative:
-            normalized_degrees_of_rotation += MAX_DEGREES_IN_CIRCLE
-        facing_up = (45 <= normalized_degrees_of_rotation) and (normalized_degrees_of_rotation <= 135)
-        facing_down = (225 <= normalized_degrees_of_rotation) and (normalized_degrees_of_rotation <= 315)
-        facing_left = (135 <= normalized_degrees_of_rotation) and (normalized_degrees_of_rotation <= 225)
-        # Note that it's important for this "facing right" check to come last
-        # because this is where the degrees of the circle wrap around, meaning
-        # an "or" check is necessary.  Alternatively, we could complicate this
-        # condition by adding in additional checks for around 360 or 0 degrees.
-        facing_right = (315 <= normalized_degrees_of_rotation) or (normalized_degrees_of_rotation <= 45)
-        if facing_up:
-            self.FacingDirection = MoveDirection.Up
-        elif facing_down:
-            self.FacingDirection = MoveDirection.Down
-        elif facing_left:
-            self.FacingDirection = MoveDirection.Left
-        elif facing_right:
-            self.FacingDirection = MoveDirection.Right
+        # (reference a unit circle diagram).  An update is made only if
+        # the approximation is successful.
+        approximated_facing_direction = CartesianCoordinateSystem.ApproximateCardinalDirection(degrees_of_rotation)
+        if approximated_facing_direction:
+            self.FacingDirection = approximated_facing_direction
 
         # UPDATE THE PLAYER POSITION.
         # The rotation repositions the character's image slightly so the
