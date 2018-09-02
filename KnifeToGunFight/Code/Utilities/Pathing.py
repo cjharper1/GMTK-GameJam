@@ -21,9 +21,33 @@ class Pathing(AStar):
     ## \author  Tom Rogan
     ## \date    09/01/2018
     def GetPath(self, start_grid_position, destination_grid_position):
-        start = Vector2(start_grid_position[0], start_grid_position[1])
-        self.Destination = Vector2(destination_grid_position[0], destination_grid_position[1])
-        return self.astar(start, self.Destination)
+        self.Destination = destination_grid_position
+        return self.astar(start_grid_position, self.Destination)
+
+    ## Determines the direct distance between two positions on the game map.
+    ## \param[in] start_grid_position - A grid position as a Vector2 of column and row index.
+    ## \param[in] destination_grid_position - The destination as a Vector2 of column and row index.
+    ## \return  The distance between the grid positions.
+    ## \author  Tom Rogan
+    ## \date    09/01/2018
+    def GetDirectDistanceBetweenGridPositions(self, start_grid_position, destination_grid_position):
+        # Determine how many columns apart the two locations are.
+        column_delta = (destination_grid_position.X - start_grid_position.X)
+
+        # Determine how many rows apart the two locations are.
+        row_delta = (destination_grid_position.Y - start_grid_position.Y)
+
+        # Treat the start and destination as two corners of a triangle.
+        # The direct distance between them is the hypotenuse of the triangle.
+        #
+        # start
+        #     |\
+        #     | \
+        #     |  \
+        #     |   \
+        #     |    \
+        #     |-----destination
+        return math.hypot(column_delta, row_delta)
 
     ## For a given grid position, determines the list of neighboring grid positions
     ## that are reachable and not occupied by a game object.
@@ -57,23 +81,7 @@ class Pathing(AStar):
     ## \author  Tom Rogan
     ## \date    09/01/2018
     def heuristic_cost_estimate(self, start_grid_position, destination_grid_position):
-        # Determine how many columns apart the two locations are.
-        column_delta = (destination_grid_position.X - start_grid_position.X)
-
-        # Determine how many rows apart the two locations are.
-        row_delta = (destination_grid_position.Y - start_grid_position.Y)
-
-        # Treat the start and destination as two corners of a triangle.
-        # The direct distance between them is the hypotenuse of the triangle.
-        #
-        # start
-        #     |\
-        #     | \
-        #     |  \
-        #     |   \
-        #     |    \
-        #     |-----destination
-        return math.hypot(column_delta, row_delta)
+        return self.GetDirectDistanceBetweenGridPositions(start_grid_position, destination_grid_position)
 
     ## Computes the distance between two neighboring positions on the grid.
     ## \param[in] grid_position - A grid position as a Vector2 of column and row index.

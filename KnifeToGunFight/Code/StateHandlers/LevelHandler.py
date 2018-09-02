@@ -1,7 +1,6 @@
 from itertools import islice
 import math
 import os
-import random
 import sys
 
 import pygame
@@ -166,6 +165,7 @@ class LevelHandler(StateHandler):
         # UPDATE EACH ENEMY.
         player = self.Map.GetPlayer()
         player_position = self.Map.GetGridPosition(player.TopLeftCornerPosition)
+        player_position_vector = Vector2(player_position[0], player_position[1])
         enemies = self.Map.GetEnemies()
         for enemy in enemies:
             # TODO: SHOOT AT PLAYER.
@@ -176,15 +176,18 @@ class LevelHandler(StateHandler):
             if enemy_is_stationary:
                 continue
             
-            # CHECK IF A RANDOM MOVE SHOULD BE MADE.
-            RANDOM_MOVE_CHANCE = 0.5
-            move_randomly = (random.random() < RANDOM_MOVE_CHANCE)
-            if move_randomly:
-                direction_to_move = random.choice([MoveDirection.Up, MoveDirection.Down, MoveDirection.Left, MoveDirection.Right])
+            # CHECK IF THE ENEMY IS ALREADY CLOSE ENOUGH TO THE PLAYER.
+            enemy_position = self.Map.GetGridPosition(enemy.TopLeftCornerPosition)
+            enemy_position_vector = Vector2(enemy_position[0], enemy_position[1])
+            distance_to_player = self.Pathing.GetDirectDistanceBetweenGridPositions(player_position_vector, enemy_position_vector)
+            MINIMUM_DISTANCE = 3.0
+            already_close_enough_to_player = (distance_to_player < MINIMUM_DISTANCE)
+            if already_close_enough_to_player:
+                # Back up, away from the player.
+                direction_to_move = LevelHandler.GetDirectionTowardPosition(player_position_vector, enemy_position_vector)
             else:
                 # Get the shortest path to the player from the enemy.
-                enemy_position = self.Map.GetGridPosition(enemy.TopLeftCornerPosition)
-                path_to_player = self.Pathing.GetPath(enemy_position, player_position)
+                path_to_player = self.Pathing.GetPath(enemy_position_vector, player_position_vector)
                 if path_to_player is None:
                     # This enemy cannot currently reach the player.
                     continue
@@ -193,7 +196,7 @@ class LevelHandler(StateHandler):
                 # order to reach the player.
                 next_grid_position_in_path_to_player = next(islice(path_to_player, 1, None), None)
                 direction_to_move = LevelHandler.GetDirectionTowardPosition(
-                    Vector2(enemy_position[0], enemy_position[1]),
+                    enemy_position_vector,
                     next_grid_position_in_path_to_player)
 
             # Move.
