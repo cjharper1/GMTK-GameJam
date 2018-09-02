@@ -62,19 +62,21 @@ class LevelHandler(StateHandler):
 
             # UPDATE THE TELEPORTER.
             teleporter = self.Map.GetTeleporter()
+            teleporter_activated = False
             if teleporter is not None:
                 # Update the teleporter animation.
                 enemies = self.Map.GetEnemies()
                 enemy_count = len(enemies)
                 teleporter.Update(time_since_last_update_in_seconds, enemy_count)
+                teleporter_activated = teleporter.Activated
 
             # HANDLE PLAYER INTERACTION.
             # This must be performed after updating the teleporter because when the player walks into the teleporter
             # it will be removed from the map since two objects cannot occupy the same space.
-            collided_with_teleporter = self.HandlePlayerInteraction(teleporter.Activated)
+            collided_with_teleporter = self.HandlePlayerInteraction(teleporter_activated)
             
             # Check if we should move to the next level.
-            move_to_next_level = (collided_with_teleporter and teleporter.Activated)
+            move_to_next_level = (collided_with_teleporter and teleporter_activated)
             if move_to_next_level:
                 # Form the filepath for the next level.
                 # Increment the level number in the filename by 1.
@@ -90,7 +92,7 @@ class LevelHandler(StateHandler):
             # UPDATE THE LASERS.
             for laser in self.Map.Lasers:
                 laser.Update(time_since_last_update_in_seconds)
-
+                
             # Any lasers that are no longer in bounds should be removed.
             self.Map.Lasers = [laser for laser in self.Map.Lasers if self.Map.ObjectInBounds(laser)]
 

@@ -92,6 +92,14 @@ class LevelMap(object):
     def GetEnemies(self):
         # SEARCH THROUGH ALL THE OBJECTS IN THE MAP FOR THE ENEMY OBJECTS.
         return [object for object in self.Map.values() if isinstance(object, Enemy)]
+        
+    ## Gets all walls from the game map.
+    ## \return  A list of all Wall objects on the map.
+    ## \author  Michael Watkinson
+    ## \date    09/02/2018
+    def GetWalls(self):
+        # SEARCH THROUGH ALL THE OBJECTS IN THE MAP FOR THE ENEMY OBJECTS.
+        return [object for object in self.Map.values() if isinstance(object, Wall)]
 
     ## Gets the teleporter object from the game map.
     ## \return  The Teleporter object.
