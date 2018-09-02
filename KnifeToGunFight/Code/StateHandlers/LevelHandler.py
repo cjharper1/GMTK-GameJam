@@ -26,17 +26,13 @@ class LevelHandler(StateHandler):
         
         # INITIALIZE INSTANCE VARIABLES.
         self.GameWindow = game_window
-        self.LevelFilepath = level_filepath if level_filepath is not None else '../Maps/Level1.txt'
+        self.LevelFilepath = level_filepath if level_filepath is not None else '../Maps/Level01.txt'
         self.Map = LevelMap(self.LevelFilepath)
 
     ## Runs the level and and handles displaying all graphics, playing sounds, and player interaction.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
     def Run(self):
-        # PLAY BACKGROUND MUSIC.
-        self.BackgroundMusic.set_volume(0.25)
-        self.BackgroundMusic.play(-1, 0)
-    
         # HANDLE INTERACTION.
         # The clock is used to determine elapsed time between frames.
         clock = pygame.time.Clock()
@@ -120,11 +116,14 @@ class LevelHandler(StateHandler):
         # HANDLE PLAYER MOVEMENT.
         currently_pressed_keys = pygame.key.get_pressed()
         if currently_pressed_keys[pygame.K_w]:
-            player.MoveUp(self.Map)
+            collided_object = player.MoveUp(self.Map)
         if currently_pressed_keys[pygame.K_a]:
-            player.MoveLeft(self.Map)
+            collided_object = player.MoveLeft(self.Map)
         if currently_pressed_keys[pygame.K_s]:
-            player.MoveDown(self.Map)
+            collided_object = player.MoveDown(self.Map)
         if currently_pressed_keys[pygame.K_d]:
-            player.MoveRight(self.Map)
+            collided_object = player.MoveRight(self.Map)
+            
+        # HANDLE USING TELEPORTER.
+        
             

@@ -24,9 +24,15 @@ class StateHandler(object):
         audio_provided = audio is not None
         if audio_provided:
             for audio_name, audio_filepath in audio.items():
-                # Load the audio asset.
-                audio_asset = pygame.mixer.Sound(audio_filepath)
-                setattr(self, audio_name, audio_asset)
+                # Determine how to handle the audio.
+                if ('.mp3' in audio_filepath):
+                    audio_asset = pygame.mixer.music.load(audio_filepath)
+                    pygame.mixer.music.play()
+                    
+                else:
+                    # Load the audio asset.
+                    audio_asset = pygame.mixer.Sound(audio_filepath)
+                    setattr(self, audio_name, audio_asset)
             
         # CALCULATE THE FRAMES PER SECOND FOR THE GAME.
         # Limit the game to 60 fps.
