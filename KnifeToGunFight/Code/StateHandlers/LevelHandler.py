@@ -71,7 +71,7 @@ class LevelHandler(StateHandler):
             # HANDLE PLAYER INTERACTION.
             # This must be performed after updating the teleporter because when the player walks into the teleporter
             # it will be removed from the map since two objects cannot occupy the same space.
-            collided_with_teleporter = self.HandlePlayerInteraction()
+            collided_with_teleporter = self.HandlePlayerInteraction(teleporter.Activated)
             
             # Check if we should move to the next level.
             move_to_next_level = (collided_with_teleporter and teleporter.Activated)
@@ -119,10 +119,11 @@ class LevelHandler(StateHandler):
             self.GameWindow.Update(self.Map)
            
     ## Handles player input from events, key presses and mouse interaction.
+    ## \param[in]  teleporter_activated - A boolean to determine if the player can us the teleporter.
     ## \return  True if the player used the teleporter; False otherwise.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
-    def HandlePlayerInteraction(self):
+    def HandlePlayerInteraction(self, teleporter_activated):
         # GET THE PLAYER OBJECT FROM THE MAP.
         player = self.Map.GetPlayer()
 
@@ -147,9 +148,13 @@ class LevelHandler(StateHandler):
                 # SWING THE PLAYER'S SWORD.
                 player.SwingSword()
         
+        # DETERMINE THE GAME OBJECTS THE PLAYER CAN COLLIDE WITH.
+        allowed_collision_classes = ()
+        if teleporter_activated:
+            allowed_collision_classes = (Teleporter)
+        
         # HANDLE PLAYER MOVEMENT.
         collided_object = None
-        allowed_collision_classes = (Teleporter)
         currently_pressed_keys = pygame.key.get_pressed()
         if currently_pressed_keys[pygame.K_w]:
             collided_object = player.MoveUp(self.Map, allowed_collision_classes)
