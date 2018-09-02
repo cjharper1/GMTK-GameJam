@@ -1,3 +1,5 @@
+import math
+
 import pygame
 
 from Math.Vector2 import Vector2
@@ -69,3 +71,35 @@ class Player(GameObject):
             self.Sword.StartSwingingFromUpToLeft(self.HandScreenPosition)
         elif MoveDirection.Right == self.FacingDirection:
             self.Sword.StartSwingingFromDownToRight(self.HandScreenPosition)
+
+    ## Updates the player's current state.
+    ## Right now this just handles rotating the player based on
+    ## their mouse cursor position.
+    ## \author  CJ Harper
+    ## \date    09/02/2018
+    def Update(self):
+        # GET THE POSITION OF THE PLAYER'S CURSOR.
+        (mouse_x_position, mouse_y_position) = pygame.mouse.get_pos()
+
+        # ROTATE THE PLAYER.
+        # The top of the player is used as the reference rather than the center
+        # so the character looks at the cursor.
+        mouse_x_position, mouse_y_position = pygame.mouse.get_pos()
+        distance_from_player_to_mouse_x = (mouse_x_position - self.Coordinates.x)
+        distance_from_player_to_mouse_y = (mouse_y_position - self.Coordinates.y)
+        radians_to_rotate = -math.atan2(distance_from_player_to_mouse_y, distance_from_player_to_mouse_x)
+        degrees_of_rotation = math.degrees(radians_to_rotate)
+
+        # 90 degrees is subtracted from the rotation since the image spawns facing upward (i.e. rotated 90 degrees from the x-axis)
+        # and the arctan function calculates rotation as if the image spawned facing the x-axis.
+        degrees_of_rotation -= 90
+
+        # The default image is rotated every time because continuing to rotate the same image
+        # over and over will result in degradation of image quality.
+        self.Image = pygame.transform.rotate(self.__DefaultImage, degrees_of_rotation)
+
+        # UPDATE THE PLAYER POSITION.
+        # The rotation repositions the character's image slightly so the
+        # player's position needs to be updated to account for this.
+        # \todo Figure out why this causes player to get stuck in walls.
+        #self.Coordinates = self.Image.get_rect(center = self.Coordinates.center)

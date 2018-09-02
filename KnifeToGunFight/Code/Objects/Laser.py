@@ -43,3 +43,13 @@ class Laser(GameObject):
     ## \date    09/01/2018
     def Update(self):
         self.Move(self.Trajectory.X, self.Trajectory.Y)
+
+    ## Reflects the projectile.
+    ## \author  CJ Harper
+    ## \date    09/02/2018
+    def Reflect(self):
+        # REVERSE THE TRAJECTORY OF THE LASER.
+        # Multiplying a vector by -1 will make it point in the opposite direction.
+        REVERSE_DIRECTION = -1
+        self.Trajectory.X = (self.Trajectory.X * REVERSE_DIRECTION)
+        self.Trajectory.Y = (self.Trajectory.Y * REVERSE_DIRECTION)

@@ -12,6 +12,7 @@ from Objects.GameObject import GameObject
 from Objects.Player import Player
 from Objects.Teleporter import Teleporter
 from Objects.Turret import Turret
+from Objects.Laser import Laser
 from Utilities.CollisionDetection import MoveDirection
 from Utilities.Pathing import Pathing
 
@@ -57,18 +58,6 @@ class LevelHandler(StateHandler):
             time_since_last_update_in_ms = clock.tick(self.MaxFramesPerSecond)
             MILLISECONDS_PER_SECOND = 1000
             time_since_last_update_in_seconds = (time_since_last_update_in_ms / MILLISECONDS_PER_SECOND)
-
-            # UPDATE THE TELEPORTER ANIMATION.
-            teleporter = self.Map.GetTeleporter()
-            if teleporter is not None:
-                teleporter.Update(time_since_last_update_in_seconds)
-
-            # Set player position and rotation.
-            #position = pygame.mouse.get_pos()
-            #angle = math.atan2(int(position[1] - (self.PlayerPosition [1])), int(position[0] - self.PlayerPosition [0] + 26))
-            #player_rotated = pygame.transform.rotate(self.Player, 360 - angle * 57.29)
-            #player_position_1 = (self.PlayerPosition [0] - player_rotated.get_rect().width / 2, self.PlayerPosition [1] - player_rotated.get_rect().height / 2)
-            #self.Screen.blit(player_rotated, player_position_1)
             
             # HANDLE PLAYER INTERACTION.
             move_to_next_level = self.HandlePlayerInteraction()
@@ -82,38 +71,35 @@ class LevelHandler(StateHandler):
                 
                 # Prepare the handler for the next level.
                 return LevelHandler(self.GameWindow, next_level_filepath)
-
+            
             # ALLOW ENEMIES TO REACT TO THE PLAYER.
             self.UpdateEnemies()
 
-            # UPDATE GAME OBJECTS BASED ON ELAPSED TIME.
-            ## \todo    Update all objects, not just sword.
+            # UPDATE GAME OBJECTS.
+            teleporter = self.Map.GetTeleporter()
+            if teleporter is not None:
+                teleporter.Update(time_since_last_update_in_seconds)
             player = self.Map.GetPlayer()
-            # The sword's handle position should follow the player when the player moves.
-            player.Sword.HandleScreenPosition = player.HandScreenPosition
-            player.Sword.Update(time_since_last_update_in_seconds)
+            if player is not None:
+                player.Update()
 
-            # HANDLE SWORD COLLISIONS IF THE SWORD IS OUT.
-            if player.Sword.IsSwinging:
-                # CHECK FOR COLLISIONS OF THE SWORD WITH OTHER GAME OBJECTS.
-                for grid_coordinates, game_object in self.Map.Map.items():
-                    # CHECK FOR COLLISIONS WITH PROJECTILES.
-                    ## \todo    Switch this to projectiles in order to deflect them.
-                    ## Turrets are just used now for testing.
-                    if isinstance(game_object, Turret):
-                        # DETERMINE IF THE SWORD HIT THE PROJECTILE.
-                        sword_bounding_rectangle = player.Sword.BoundingScreenRectangle
-                        projectile_rectangle = game_object.Coordinates
-                        sword_collides_with_projectile = sword_bounding_rectangle.colliderect(projectile_rectangle)
-                        if sword_collides_with_projectile:
-                            ## \todo    Remove debug message.  A debug rectangle would be drawn instead,
-                            ## but it's not easy to do that right now since all rendering is encapsulated
-                            ## in GameWindow.Update().
-                            projectile_debug_message = f'Collided @ time {pygame.time.get_ticks()} with {projectile_rectangle}.'
-                            print(projectile_debug_message)
+                # The sword's handle position should follow the player when the player moves.
+                player.Sword.HandleScreenPosition = player.HandScreenPosition
+                player.Sword.Update(time_since_last_update_in_seconds)
 
-                            # REFLECT THE PROJECTILE.
-                            ## \todo    Implement reflection!
+                # HANDLE SWORD COLLISIONS IF THE SWORD IS OUT.
+                if player.Sword.IsSwinging:
+                    # CHECK FOR COLLISIONS OF THE SWORD WITH OTHER GAME OBJECTS.
+                    for grid_coordinates, game_object in self.Map.Map.items():
+                        # CHECK FOR COLLISIONS WITH PROJECTILES.
+                        if isinstance(game_object, Laser):
+                            # DETERMINE IF THE SWORD HIT THE PROJECTILE.
+                            sword_bounding_rectangle = player.Sword.BoundingScreenRectangle
+                            projectile_rectangle = game_object.Coordinates
+                            sword_collides_with_projectile = sword_bounding_rectangle.colliderect(projectile_rectangle)
+                            if sword_collides_with_projectile:
+                                # REFLECT THE PROJECTILE.
+                                game_object.Reflect()
 
             # UPDATE THE SCREEN.
             self.GameWindow.Update(self.Map)
