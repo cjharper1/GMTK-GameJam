@@ -197,6 +197,9 @@ class LevelHandler(StateHandler):
                         # No further updates are necessary for this enemy.
                         continue
 
+            # TARGET THE PLAYER.
+            enemy.TargetPlayer(player)
+                        
             # RANDOMLY SHOOT AT THE PLAYER.
             laser = enemy.TryShooting(time_since_last_update_in_seconds, player, self.Map)
             if laser:

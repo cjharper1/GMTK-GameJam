@@ -103,4 +103,4 @@ class GameObject(object):
         
         # UPDATE THE POSITION OF THE GAME OBJECT IN THE LEVEL MAP.
         level_map.MoveObjectInMap(self)
-        return collided_object 
+        return collided_object

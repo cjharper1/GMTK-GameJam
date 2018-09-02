@@ -82,7 +82,7 @@ class Player(GameObject):
         # GET THE POSITION OF THE PLAYER'S CURSOR.
         (mouse_x_position, mouse_y_position) = pygame.mouse.get_pos()
 
-        # ROTATE THE PLAYER.
+        # CALCULATE ROTATION.
         # The top of the player is used as the reference rather than the center
         # so the character looks at the cursor.
         mouse_x_position, mouse_y_position = pygame.mouse.get_pos()
@@ -95,9 +95,13 @@ class Player(GameObject):
         # and the arctan function calculates rotation as if the image spawned facing the x-axis.
         degrees_of_rotation_relative_to_image_facing_up = degrees_of_rotation - 90
 
-        # The default image is rotated every time because continuing to rotate the same image
-        # over and over will result in degradation of image quality.
-        self.Image = pygame.transform.rotate(self.__DefaultImage, degrees_of_rotation_relative_to_image_facing_up)
+        # ROTATE AND POSITION THE PLAYER.
+        # The original size and shape are preserved to preserve collision detection.
+        original_rect = self.Coordinates
+        rotated_image = pygame.transform.rotate(self.__DefaultImage, degrees_of_rotation_relative_to_image_facing_up)
+        rotated_rect = original_rect.copy()
+        rotated_rect.center = rotated_image.get_rect().center
+        self.Image = rotated_image.subsurface(rotated_rect).copy()
 
         # UPDATE THE PLAYER'S FACING DIRECTION.
         # This needs to be updated to try and keep the sword in front of the player.
@@ -108,13 +112,3 @@ class Player(GameObject):
         approximated_facing_direction = CartesianCoordinateSystem.ApproximateCardinalDirection(degrees_of_rotation)
         if approximated_facing_direction:
             self.FacingDirection = approximated_facing_direction
-
-        # UPDATE THE PLAYER POSITION.
-        # The rotation repositions the character's image slightly so the
-        # player's position needs to be updated to account for this.
-        ## \todo Figure out why this causes player to get stuck in walls.
-        ## Part of the reason for this is likely that rotating an image results
-        ## in the image itself have a larger rectangle to fully encompass the bounds
-        ## of the rotated image.  If you add debug rectangle drawing similar to what
-        ## exists in the Sword class, you could probably see this.
-        #self.Coordinates = self.Image.get_rect(center = self.Coordinates.center)
