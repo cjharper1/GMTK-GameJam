@@ -48,7 +48,7 @@ class GameObject(object):
     ## \date    09/01/2018
     def MoveUp(self, level_map):
         self.FacingDirection = MoveDirection.Up
-        return self.Move(y_movement_in_pixels = -self.__Speed, level_map = level_map)
+        return self.Move(level_map, y_movement_in_pixels = -self.__Speed)
 
     ## Moves the player down one step.
     ## \param[in]   level_map - The LevelMap object to interact with.
@@ -57,7 +57,7 @@ class GameObject(object):
     ## \date    09/01/2018
     def MoveDown(self, level_map):
         self.FacingDirection = MoveDirection.Down
-        return self.Move(y_movement_in_pixels = self.__Speed, level_map = level_map)
+        return self.Move(level_map, y_movement_in_pixels = self.__Speed)
 
     ## Moves the player left one step.
     ## \param[in]   level_map - The LevelMap object to interact with.
@@ -66,7 +66,7 @@ class GameObject(object):
     ## \date    09/01/2018
     def MoveLeft(self, level_map):
         self.FacingDirection = MoveDirection.Left
-        return self.Move(x_movement_in_pixels = -self.__Speed, level_map = level_map)
+        return self.Move(level_map, x_movement_in_pixels = -self.__Speed)
 
     ## Moves the player right one step.
     ## \param[in]   level_map - The LevelMap object to interact with.
@@ -75,18 +75,18 @@ class GameObject(object):
     ## \date    09/01/2018
     def MoveRight(self, level_map):
         self.FacingDirection = MoveDirection.Right
-        return self.Move(x_movement_in_pixels = self.__Speed, level_map = level_map)
+        return self.Move(level_map, x_movement_in_pixels = self.__Speed)
 
     ## Moves the game object.
+    ## \param[in]   level_map - The LevelMap object to interact with.
     ## \param[in]   x_movement_in_pixels - The number of pixels to move along the x axis.
     ## \param[in]   y_movement_in_pixels - The number of pixels to move along the y axis.
     ## \param[in]   prevent_collision - A boolean for whether or not to prevent moves that
     ##      will result in a collision.
-    ## \param[in]   level_map - The LevelMap object to interact with.
     ## \return   A collided object if a collision occurred; None otherwise.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
-    def Move(self, x_movement_in_pixels = 0, y_movement_in_pixels = 0, prevent_collision = True, level_map = None):
+    def Move(self, level_map, x_movement_in_pixels = 0, y_movement_in_pixels = 0, prevent_collision = True):
         # MOVE THE GAME OBJECT.
         self.Coordinates = self.Coordinates.move(x_movement_in_pixels, y_movement_in_pixels)
         
