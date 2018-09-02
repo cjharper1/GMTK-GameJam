@@ -43,6 +43,10 @@ class LevelHandler(StateHandler):
             MILLISECONDS_PER_SECOND = 1000
             time_since_last_update_in_seconds = (time_since_last_update_in_ms / MILLISECONDS_PER_SECOND)
 
+            # UPDATE THE TELEPORTER ANIMATION.
+            teleporter = self.Map.GetTeleporter()
+            teleporter.Update(time_since_last_update_in_seconds)
+
             # Set player position and rotation.
             #position = pygame.mouse.get_pos()
             #angle = math.atan2(int(position[1] - (self.PlayerPosition [1])), int(position[0] - self.PlayerPosition [0] + 26))

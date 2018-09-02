@@ -4,6 +4,8 @@ from Objects.Player import Player
 from Objects.Wall import Wall
 from Objects.Turret import Turret
 
+from Objects.Teleporter import Teleporter
+
 # A mapping of ASCII character map objects to game object classes.
 class GameObjectMapping(object):
     @staticmethod
@@ -14,6 +16,8 @@ class GameObjectMapping(object):
             return Wall(y_position, x_position)
         if ascii_object == 'T':
             return Turret(y_position, x_position)
+        if ascii_object == 'D':
+            return Teleporter(x_position, y_position)
         else:
             return None
 
@@ -72,6 +76,18 @@ class LevelMap(object):
             # Check if the current object is the player.
             player_found = (isinstance(object, Player))
             if player_found:
+                return object
+
+    ## Gets the teleporter object from the game map.
+    ## \return  The Teleporter object.
+    ## \author  CJ Harper
+    ## \date    09/01/2018
+    def GetTeleporter(self):
+        # SEARCH THROUGH ALL THE OBJECTS IN THE MAP FOR THE TELEPORTER OBJECT.
+        for object in self.Map.values():
+            # Check if the current object is the teleporter.
+            teleporter_found = (isinstance(object, Teleporter))
+            if teleporter_found:
                 return object
                 
     ## Gets the grid position for the specified coordinates.
