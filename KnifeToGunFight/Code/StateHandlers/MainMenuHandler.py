@@ -8,7 +8,7 @@ class MainMenuHandler(StateHandler):
     def __init__(self, game_window):
         # INITIALIZE THE HANDLER.
         audio = {
-            'BackgroundMusic': '../Audio/background_music_old.wav'}
+            'BackgroundMusic': '../Audio/background_music.mp3'}
         images = {
             'MainMenuWithPressAnyKeyText': '../Images/MainMenuWithPressAnyKeyText.gif',
             'MainMenuWithoutPressAnyKeyText': '../Images/MainMenuWithoutPressAnyKeyText.gif'}
@@ -17,10 +17,6 @@ class MainMenuHandler(StateHandler):
         self.GameWindow = game_window
 
     def Run(self):
-        # PLAY BACKGROUND MUSIC.
-        self.BackgroundMusic.set_volume(0.25)
-        self.BackgroundMusic.play(-1, 0)
-
         clock = pygame.time.Clock()
         useWithoutPressAnyKeyText = False
         while True:
