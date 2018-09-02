@@ -4,7 +4,6 @@ from Objects.Player import Player
 from Objects.Wall import Wall
 from Objects.Turret import Turret
 
-
 # A mapping of ASCII character map objects to game object classes.
 class GameObjectMapping(object):
     @staticmethod
@@ -23,13 +22,14 @@ class LevelMap(object):
         # Define the path to the current level.
         self.LevelMapFilepath = currentLevelFilePath
 
-        # The height and width of the map.
+        # The width of the map.
         self.MapWidth = 0
-        ## The map containing all of the game objects as a dictionary.  The key of the dictionary is
-        ## a two-tuple of the coordinates of the block the object is currently occupying and the
-        ## value is the object.
+        ## The height of the map.
+        self.MapHeight = 0
+        ## The map containing all of the game objects as a dictionary.  They key of the dictionary is
+        ## a two-tuple of the coordinates of the block the object is currently occupying and the value is the object.
         self.Map = {}
-
+        
         # Build the map.
         self.ParseMap()
 
@@ -60,8 +60,7 @@ class LevelMap(object):
                 mappedObject = GameObjectMapping.buildObject(ascii_object, x_position, y_position)
 
                 if mappedObject is not None:
-                    self.Map[(row_index, column_index)] = mappedObject
-
+                    self.Map[(column_index, row_index)] = mappedObject
 
     ## Gets the player object from the game map.
     ## \return  The Player object.
@@ -86,12 +85,18 @@ class LevelMap(object):
         x_coordinate, y_coordinate = coordinates
         grid_row_index = int(y_coordinate / GameObject.HeightPixels)
         grid_column_index = int(x_coordinate / GameObject.WidthPixels)
-        return (grid_row_index, grid_column_index)
-
-    ## Remove a game object from the map.
-    ## Handles the main execution of the game.
+        return (grid_column_index, grid_row_index)
+                
+    ## Moves the specified GameObject to a new grid position.
+    ## \param[in]   game_object - The GameObject to move.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
-    def RemoveObject(self, object):
-        grid_position = self.GetGridPosition(object.TopLeftCornerPosition)
-        self.Map.pop(grid_position)
+    def MoveObjectInMap(self, game_object):
+        # REMOVE THE GAME OBJECT FROM THE MAP.
+        self.Map = {key:value for key, value in self.Map.items() if (not value == game_object)}
+        
+        # GET THE NEW GRID POSITION.
+        new_grid_position = self.GetGridPosition(game_object.TopLeftCornerPosition)
+        
+        # UPDATE THE POSITION.
+        self.Map[new_grid_position] = game_object

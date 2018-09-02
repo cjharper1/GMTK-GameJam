@@ -7,8 +7,6 @@ from Graphics.LevelMap import LevelMap
 from .StateHandler import StateHandler
 from Objects.Player import Player
 from Objects.Turret import Turret
-from Utilities.CollisionDetection import HandleCollision, MoveDirection
-from Utilities.CollisionDetection import HandleCollision, MoveDirection
 
 ## The handler class for controlling a level of the game.
 ## \author  Michael Watkinson
@@ -88,7 +86,6 @@ class LevelHandler(StateHandler):
                             # REFLECT THE PROJECTILE.
                             ## \todo    Implement reflection!
 
-
             # UPDATE THE SCREEN.
             self.GameWindow.Update(self.Map)
            
@@ -123,15 +120,11 @@ class LevelHandler(StateHandler):
         # HANDLE PLAYER MOVEMENT.
         currently_pressed_keys = pygame.key.get_pressed()
         if currently_pressed_keys[pygame.K_w]:
-            player.MoveUp()
-            HandleCollision(self.Map, player, MoveDirection.Up)
+            player.MoveUp(self.Map)
         if currently_pressed_keys[pygame.K_a]:
-            player.MoveLeft()
-            HandleCollision(self.Map, player, MoveDirection.Left)
+            player.MoveLeft(self.Map)
         if currently_pressed_keys[pygame.K_s]:
-            player.MoveDown()
-            HandleCollision(self.Map, player, MoveDirection.Down)
+            player.MoveDown(self.Map)
         if currently_pressed_keys[pygame.K_d]:
-            player.MoveRight()
-            HandleCollision(self.Map, player, MoveDirection.Right)
+            player.MoveRight(self.Map)
             

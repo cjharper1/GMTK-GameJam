@@ -41,15 +41,12 @@ class Player(GameObject):
     ## \author  Michael Watkinson
     ## \date    09/01/2018
     def __init__(self, initial_x_position : int, initial_y_position : int):
-        GameObject.__init__(self, initial_x_position, initial_y_position)
+        GameObject.__init__(self, initial_x_position, initial_y_position, speed = 1)
         self.__DefaultImage = pygame.image.load('../Images/Player.gif').convert()
 
         ## The current image to show for the player. The default image is used until an action occurs
         ## which would change this from the default.
         self.Image = self.__DefaultImage
-
-        ## The count of pixels this character moves each step.
-        self.__Speed = 1
 
         ## The direction the player is currently facing.
         ## (starts facing up by default).
@@ -58,34 +55,6 @@ class Player(GameObject):
 
         ## The player's sword.
         self.Sword = Sword()
-
-    ## Moves the player up one step.
-    ## \author  Michael Watkinson
-    ## \date    09/01/2018
-    def MoveUp(self):
-        self.FacingDirection = MoveDirection.Up
-        self.Move(y_movement_in_pixels = -self.__Speed)
-
-    ## Moves the player down one step.
-    ## \author  Michael Watkinson
-    ## \date    09/01/2018
-    def MoveDown(self):
-        self.FacingDirection = MoveDirection.Down
-        self.Move(y_movement_in_pixels = self.__Speed)
-
-    ## Moves the player left one step.
-    ## \author  Michael Watkinson
-    ## \date    09/01/2018
-    def MoveLeft(self):
-        self.FacingDirection = MoveDirection.Left
-        self.Move(x_movement_in_pixels = -self.__Speed)
-
-    ## Moves the player right one step.
-    ## \author  Michael Watkinson
-    ## \date    09/01/2018
-    def MoveRight(self):
-        self.FacingDirection = MoveDirection.Right
-        self.Move(x_movement_in_pixels = self.__Speed)
 
     ## Starts swinging the player's sword if it's not already swinging.
     ## \author  Jacob Pike
