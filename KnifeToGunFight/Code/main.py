@@ -1,3 +1,4 @@
+import os
 import pygame
 
 from GameWindow import GameWindow
@@ -21,5 +22,9 @@ def RunGame():
         current_state = current_state.Run()
 
 if __name__ == '__main__':
+    # SET CWD.
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(dir_path)
+    
     # ENTER THE MAIN GAME LOOP.
     RunGame()
