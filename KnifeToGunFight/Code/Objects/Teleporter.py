@@ -30,11 +30,25 @@ class Teleporter(GameObject):
         self.CurrentlyDisplayedImageIndex = 0
         self.FramesSinceLastImageSwap = 0
 
+        ## The teleporter is not activated by default.
+        self.Activated = False
+
     ## Updates the teleporter.
     ## \param[in]   seconds_since_last_update - The amount of seconds that have elapsed since last update.
+    ## \param[in]   enemy_count - The count of enemies on the screen currently.
     ## \author  CJ Harper
     ## \date    09/01/2018
-    def Update(self, seconds_since_last_update):
+    def Update(self, seconds_since_last_update, enemy_count):
+        # CHECK IF THE TELEPORTER SHOULD BE ACTIVATED.
+        if (enemy_count == 0):
+            self.Activated = True
+
+        # DETERMINE IF THE TELEPORTER IS ACTIVE.
+        # If the teleporter is not active, it should not
+        # display an animation.
+        if not self.Activated:
+            return
+
         # DETERMINE IF THE NEXT FRAME IN THE TELEPORTER ANIMATION SHOULD BE SHOWN.
         FRAMES_PER_SECOND = 60
         frames_since_last_update = (seconds_since_last_update * FRAMES_PER_SECOND)

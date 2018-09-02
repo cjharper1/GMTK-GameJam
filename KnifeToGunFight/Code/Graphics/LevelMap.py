@@ -138,11 +138,19 @@ class LevelMap(object):
     ## \author  Michael Watkinson
     ## \date    09/01/2018
     def MoveObjectInMap(self, game_object):
-        # REMOVE THE GAME OBJECT FROM THE MAP.
-        self.Map = {key:value for key, value in self.Map.items() if (not value == game_object)}
-        
+        # REMOVE THE OBJECT FROM THE MAP.
+        self.RemoveObject(game_object)
+
         # GET THE NEW GRID POSITION.
         new_grid_position = self.GetGridPosition(game_object.TopLeftCornerPosition)
         
         # UPDATE THE POSITION.
         self.Map[new_grid_position] = game_object
+
+    ## Removes an object from the map.
+    ## \param[in]   game_object - The object to remove.
+    ## \author  CJ Harper
+    ## \date    09/02/2018
+    def RemoveObject(self, game_object):
+        # REMOVE THE GAME OBJECT FROM THE MAP.
+        self.Map = {key:value for key, value in self.Map.items() if (not value == game_object)}

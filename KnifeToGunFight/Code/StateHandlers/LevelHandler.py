@@ -59,11 +59,22 @@ class LevelHandler(StateHandler):
             time_since_last_update_in_ms = clock.tick(self.MaxFramesPerSecond)
             MILLISECONDS_PER_SECOND = 1000
             time_since_last_update_in_seconds = (time_since_last_update_in_ms / MILLISECONDS_PER_SECOND)
-            
+
+            # UPDATE THE TELEPORTER.
+            teleporter = self.Map.GetTeleporter()
+            if teleporter is not None:
+                # Update the teleporter animation.
+                enemies = self.Map.GetEnemies()
+                enemy_count = len(enemies)
+                teleporter.Update(time_since_last_update_in_seconds, enemy_count)
+
             # HANDLE PLAYER INTERACTION.
-            move_to_next_level = self.HandlePlayerInteraction()
+            # This must be performed after updating the teleporter because when the player walks into the teleporter
+            # it will be removed from the map since two objects cannot occupy the same space.
+            collided_with_teleporter = self.HandlePlayerInteraction()
             
-            # HANDLE MOVING TO NEXT LEVEL.
+            # Check if we should move to the next level.
+            move_to_next_level = (collided_with_teleporter and teleporter.Activated)
             if move_to_next_level:
                 # Form the filepath for the next level.
                 # Increment the level number in the filename by 1.
@@ -75,11 +86,6 @@ class LevelHandler(StateHandler):
             
             # ALLOW ENEMIES TO REACT TO THE PLAYER.
             self.UpdateEnemies(time_since_last_update_in_seconds)
-
-            # UPDATE THE TELEPORTER.
-            teleporter = self.Map.GetTeleporter()
-            if teleporter is not None:
-                teleporter.Update(time_since_last_update_in_seconds)
 
             # UPDATE THE LASERS.
             for laser in self.Map.Lasers:
@@ -179,6 +185,18 @@ class LevelHandler(StateHandler):
         player_position_vector = Vector2(player_position[0], player_position[1])
         enemies = self.Map.GetEnemies()
         for enemy in enemies:
+            # CHECK IF THE ENEMY WAS HIT BY A REFLECTED LASER.
+            for laser in self.Map.Lasers:
+                if laser.HasBeenReflected:
+                    # Check collision.
+                    enemy_was_hit_by_laser = enemy.Coordinates.colliderect(laser.Coordinates)
+                    if enemy_was_hit_by_laser:
+                        # Remove this enemy from the map.
+                        self.Map.RemoveObject(enemy)
+                        
+                        # No further updates are necessary for this enemy.
+                        continue
+
             # RANDOMLY SHOOT AT THE PLAYER.
             laser = enemy.TryShooting(time_since_last_update_in_seconds, player, self.Map)
             if laser:
