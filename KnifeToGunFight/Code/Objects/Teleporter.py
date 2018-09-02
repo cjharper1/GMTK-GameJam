@@ -37,11 +37,11 @@ class Teleporter(GameObject):
     def Update(self, seconds_since_last_update):
         # DETERMINE IF THE NEXT FRAME IN THE TELEPORTER ANIMATION SHOULD BE SHOWN.
         FRAMES_PER_SECOND = 60
-        frames_since_last_update = (seconds_since_last_update / FRAMES_PER_SECOND)
+        frames_since_last_update = (seconds_since_last_update * FRAMES_PER_SECOND)
         self.FramesSinceLastImageSwap += frames_since_last_update
         image_swap_needed = (self.FramesSinceLastImageSwap >= self.FRAMES_TO_DISPLAY_EACH_IMAGE)
         if image_swap_needed:
-            # DETERMINE THE NEXT IMAGE TO SHOW.
+            # SWAP THE IMAGE.
             # It's possible the final image of the animation is currently being shown.
             # Therefore, we should wrap back around to the first image of the animation to
             # cause it to loop.
@@ -50,3 +50,7 @@ class Teleporter(GameObject):
             if restart_animation:
                 self.CurrentlyDisplayedImageIndex = 0
             self.Image = self.IMAGES[self.CurrentlyDisplayedImageIndex]
+
+            # The timer has to be reset so another image swap does not occur until
+            # the timer has elapsed again.
+            self.FramesSinceLastImageSwap = 0
