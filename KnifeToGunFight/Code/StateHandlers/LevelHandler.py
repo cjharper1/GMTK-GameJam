@@ -27,13 +27,19 @@ class LevelHandler(StateHandler):
     ## \date    09/01/2018
     def __init__(self, game_window, level_filepath = None):
         # INITIALIZE THE HANDLER.
-        audio = {
-            'BackgroundMusic': '../Audio/background_music.mp3'}
+        # Only initialize the background music for the first level.
+        # It will be kept running throughout the game.
+        audio = None
+        level_filepath = level_filepath if (level_filepath is not None) else '../Maps/Level1.txt'
+        start_background_music = ('Level1' in level_filepath)
+        if start_background_music:
+            audio = {
+                'BackgroundMusic': '../Audio/background_music.mp3'}
         StateHandler.__init__(self, audio = audio)
         
         # INITIALIZE INSTANCE VARIABLES.
         self.GameWindow = game_window
-        self.LevelFilepath = level_filepath if level_filepath is not None else '../Maps/Level1.txt'
+        self.LevelFilepath = level_filepath
         self.Map = LevelMap(self.LevelFilepath)
         self.Pathing = Pathing(self.Map)
 

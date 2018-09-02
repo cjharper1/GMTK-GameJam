@@ -27,7 +27,7 @@ class StateHandler(object):
                 # Determine how to handle the audio.
                 if ('.mp3' in audio_filepath):
                     audio_asset = pygame.mixer.music.load(audio_filepath)
-                    pygame.mixer.music.play()
+                    pygame.mixer.music.play(loops = -1)
                     
                 else:
                     # Load the audio asset.
