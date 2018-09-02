@@ -186,7 +186,7 @@ class LevelHandler(StateHandler):
     def UpdateEnemies(self, time_since_last_update_in_seconds):
         # UPDATE EACH ENEMY.
         player = self.Map.GetPlayer()
-        player_position = self.Map.GetGridPosition(player.TopLeftCornerPosition)
+        player_position = self.Map.GetGridPosition(player.Coordinates.center)
         player_position_vector = Vector2(player_position[0], player_position[1])
         enemies = self.Map.GetEnemies()
         for enemy in enemies:
@@ -216,15 +216,22 @@ class LevelHandler(StateHandler):
                 continue
             
             # CHECK IF THE ENEMY IS ALREADY CLOSE ENOUGH TO THE PLAYER.
-            enemy_position = self.Map.GetGridPosition(enemy.TopLeftCornerPosition)
+            enemy_position = self.Map.GetGridPosition(enemy.Coordinates.center)
             enemy_position_vector = Vector2(enemy_position[0], enemy_position[1])
             distance_to_player = self.Pathing.GetDirectDistanceBetweenGridPositions(player_position_vector, enemy_position_vector)
-            MINIMUM_DISTANCE = 3.0
-            already_close_enough_to_player = (distance_to_player < MINIMUM_DISTANCE)
-            if already_close_enough_to_player:
-                # Back up, away from the player.
+            MINIMUM_DISTANCE = 3.5
+            too_close_to_player = (distance_to_player < MINIMUM_DISTANCE)
+            DESIRED_DISTANCE = 4.5
+            within_desired_distance_of_player = (distance_to_player < DESIRED_DISTANCE)
+            if too_close_to_player:
+                # BACK AWAY FROM THE PLAYER.
                 direction_to_move = LevelHandler.GetDirectionTowardPosition(player_position_vector, enemy_position_vector)
+                pass
+            elif within_desired_distance_of_player:
+                # DON'T MOVE.
+                continue
             else:
+                # MOVE TOWARD THE PLAYER.
                 # Get the shortest path to the player from the enemy.
                 path_to_player = self.Pathing.GetPath(enemy_position_vector, player_position_vector)
                 if path_to_player is None:
@@ -238,7 +245,7 @@ class LevelHandler(StateHandler):
                     enemy_position_vector,
                     next_grid_position_in_path_to_player)
 
-            # Move.
+            # MOVE.
             if direction_to_move is None:
                 continue
             elif direction_to_move == MoveDirection.Up:
