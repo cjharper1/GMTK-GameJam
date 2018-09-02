@@ -44,13 +44,9 @@ class Pathing(AStar):
     ## \date    09/01/2018
     def heuristic_cost_estimate(self, start_grid_position, destination_grid_position):
         # Determine how many columns apart the two locations are.
-        #start_column, start_row = start_grid_position
-        #destination_column, destination_row = destination_grid_position
-        #column_delta = (destination_column - start_column)
         column_delta = (destination_grid_position.X - start_grid_position.X)
 
         # Determine how many rows apart the two locations are.
-        #row_delta = (destination_row - start_row)
         row_delta = (destination_grid_position.Y - start_grid_position.Y)
 
         # Treat the start and destination as two corners of a triangle.

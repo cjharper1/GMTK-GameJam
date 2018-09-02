@@ -8,8 +8,8 @@ from Math.Vector2 import Vector2
 ## Represents an enemy which is trying to harm the player.
 class Enemy(GameObject):
     ## Constructor.
-    def __init__(self, initial_x_position, initial_y_position):
-        GameObject.__init__(self, initial_x_position, initial_y_position)
+    def __init__(self, initial_x_position, initial_y_position, speed = 0):
+        GameObject.__init__(self, initial_x_position, initial_y_position, speed = speed)
 
     ## Shoot at the player.
     ## \param[in]   player - The player to shoot at.
