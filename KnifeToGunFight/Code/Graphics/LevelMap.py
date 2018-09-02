@@ -2,9 +2,8 @@
 from Objects.GameObject import GameObject
 from Objects.Player import Player
 from Objects.Wall import Wall
-from Objects.Turret import Turret
-
 from Objects.Teleporter import Teleporter
+from Objects.Turret import Turret
 
 # A mapping of ASCII character map objects to game object classes.
 class GameObjectMapping(object):

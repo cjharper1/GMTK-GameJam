@@ -1,4 +1,5 @@
 import math
+import os
 import sys
 
 import pygame
@@ -6,6 +7,7 @@ import pygame
 from Graphics.LevelMap import LevelMap
 from .StateHandler import StateHandler
 from Objects.Player import Player
+from Objects.Teleporter import Teleporter
 from Objects.Turret import Turret
 
 ## The handler class for controlling a level of the game.
@@ -26,10 +28,11 @@ class LevelHandler(StateHandler):
         
         # INITIALIZE INSTANCE VARIABLES.
         self.GameWindow = game_window
-        self.LevelFilepath = level_filepath if level_filepath is not None else '../Maps/Level01.txt'
+        self.LevelFilepath = level_filepath if level_filepath is not None else '../Maps/Level1.txt'
         self.Map = LevelMap(self.LevelFilepath)
 
     ## Runs the level and and handles displaying all graphics, playing sounds, and player interaction.
+    ## \return  The next StateHandler class to be run in the main game loop.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
     def Run(self):
@@ -55,7 +58,17 @@ class LevelHandler(StateHandler):
             #self.Screen.blit(player_rotated, player_position_1)
             
             # HANDLE PLAYER INTERACTION.
-            self.HandlePlayerInteraction()
+            move_to_next_level = self.HandlePlayerInteraction()
+            
+            # HANDLE MOVING TO NEXT LEVEL.
+            if move_to_next_level:
+                # Form the filepath for the next level.
+                # Increment the level number in the filename by 1.
+                next_level_index = (int(os.path.basename(self.LevelFilepath).replace('Level', '').replace('.txt', '')) + 1)
+                next_level_filepath = os.path.join(os.path.dirname(self.LevelFilepath), 'Level{}.txt'.format(next_level_index))
+                
+                # Prepare the handler for the next level.
+                return LevelHandler(self.GameWindow, next_level_filepath)
 
             # UPDATE GAME OBJECTS BASED ON ELAPSED TIME.
             ## \todo    Update all objects, not just sword.
@@ -90,6 +103,7 @@ class LevelHandler(StateHandler):
             self.GameWindow.Update(self.Map)
            
     ## Handles player input from events, key presses and mouse interaction.
+    ## \return  True if the player used the teleporter; False otherwise.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
     def HandlePlayerInteraction(self):
@@ -118,16 +132,24 @@ class LevelHandler(StateHandler):
                     player.SwingSword()
         
         # HANDLE PLAYER MOVEMENT.
+        collided_object = None
+        allowed_collision_classes = (Teleporter)
         currently_pressed_keys = pygame.key.get_pressed()
         if currently_pressed_keys[pygame.K_w]:
-            collided_object = player.MoveUp(self.Map)
+            collided_object = player.MoveUp(self.Map, allowed_collision_classes)
         if currently_pressed_keys[pygame.K_a]:
-            collided_object = player.MoveLeft(self.Map)
+            collided_object = player.MoveLeft(self.Map, allowed_collision_classes)
         if currently_pressed_keys[pygame.K_s]:
-            collided_object = player.MoveDown(self.Map)
+            collided_object = player.MoveDown(self.Map, allowed_collision_classes)
         if currently_pressed_keys[pygame.K_d]:
-            collided_object = player.MoveRight(self.Map)
+            collided_object = player.MoveRight(self.Map, allowed_collision_classes)
             
         # HANDLE USING TELEPORTER.
-        
+        print(collided_object)
+        collided_with_teleporter = isinstance(collided_object, Teleporter)
+        if collided_with_teleporter:
+            return True
+        else:
+            return False
+            
             

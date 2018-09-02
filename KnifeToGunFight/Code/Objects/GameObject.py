@@ -43,59 +43,63 @@ class GameObject(object):
             
     ## Moves the player up one step.
     ## \param[in]   level_map - The LevelMap object to interact with.
+    ## \param[in]   allowed_collision_classes - A tuple of classes for objects to allow collision with.  Defaults to [].
     ## \return   A collided object if a collision occurred; None otherwise.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
-    def MoveUp(self, level_map):
+    def MoveUp(self, level_map, allowed_collision_classes = ()):
         self.FacingDirection = MoveDirection.Up
-        return self.Move(level_map, y_movement_in_pixels = -self.__Speed)
+        return self.Move(level_map, y_movement_in_pixels = -self.__Speed, allowed_collision_classes = allowed_collision_classes)
 
     ## Moves the player down one step.
     ## \param[in]   level_map - The LevelMap object to interact with.
+    ## \param[in]   allowed_collision_classes - A tuple of classes for objects to allow collision with.  Defaults to [].
     ## \return   A collided object if a collision occurred; None otherwise.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
-    def MoveDown(self, level_map):
+    def MoveDown(self, level_map, allowed_collision_classes = ()):
         self.FacingDirection = MoveDirection.Down
-        return self.Move(level_map, y_movement_in_pixels = self.__Speed)
+        return self.Move(level_map, y_movement_in_pixels = self.__Speed, allowed_collision_classes = allowed_collision_classes)
 
     ## Moves the player left one step.
     ## \param[in]   level_map - The LevelMap object to interact with.
+    ## \param[in]   allowed_collision_classes - A tuple of classes for objects to allow collision with.  Defaults to [].
     ## \return   A collided object if a collision occurred; None otherwise.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
-    def MoveLeft(self, level_map):
+    def MoveLeft(self, level_map, allowed_collision_classes = ()):
         self.FacingDirection = MoveDirection.Left
-        return self.Move(level_map, x_movement_in_pixels = -self.__Speed)
+        return self.Move(level_map, x_movement_in_pixels = -self.__Speed, allowed_collision_classes = allowed_collision_classes)
 
     ## Moves the player right one step.
     ## \param[in]   level_map - The LevelMap object to interact with.
+    ## \param[in]   allowed_collision_classes - A tuple of classes for objects to allow collision with.  Defaults to [].
     ## \return   A collided object if a collision occurred; None otherwise.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
-    def MoveRight(self, level_map):
+    def MoveRight(self, level_map, allowed_collision_classes = ()):
         self.FacingDirection = MoveDirection.Right
-        return self.Move(level_map, x_movement_in_pixels = self.__Speed)
+        return self.Move(level_map, x_movement_in_pixels = self.__Speed, allowed_collision_classes = allowed_collision_classes)
 
     ## Moves the game object.
     ## \param[in]   level_map - The LevelMap object to interact with.
     ## \param[in]   x_movement_in_pixels - The number of pixels to move along the x axis.
     ## \param[in]   y_movement_in_pixels - The number of pixels to move along the y axis.
-    ## \param[in]   prevent_collision - A boolean for whether or not to prevent moves that
-    ##      will result in a collision.
+    ## \param[in]   allowed_collision_classes - A tuple of classes for objects to allow collision with.  Defaults to [].
     ## \return   A collided object if a collision occurred; None otherwise.
     ## \author  Michael Watkinson
     ## \date    09/01/2018
-    def Move(self, level_map, x_movement_in_pixels = 0, y_movement_in_pixels = 0, prevent_collision = True):
+    def Move(self, level_map, x_movement_in_pixels = 0, y_movement_in_pixels = 0, allowed_collision_classes = ()):
         # MOVE THE GAME OBJECT.
         self.Coordinates = self.Coordinates.move(x_movement_in_pixels, y_movement_in_pixels)
         
         # CHECK FOR A COLLISION WITH ANOTHER OBJECT.
         collided_object = CheckForCollision(self, level_map)
         collision_occurred = collided_object is not None
-        if collision_occurred and prevent_collision:
-            self.Coordinates = self.Coordinates.move(-x_movement_in_pixels, -y_movement_in_pixels)
-            return None
+        if collision_occurred:
+            if not isinstance(collided_object, allowed_collision_classes):
+                self.Coordinates = self.Coordinates.move(-x_movement_in_pixels, -y_movement_in_pixels)
+                return None
         
         # UPDATE THE POSITION OF THE GAME OBJECT IN THE LEVEL MAP.
         level_map.MoveObjectInMap(self)
