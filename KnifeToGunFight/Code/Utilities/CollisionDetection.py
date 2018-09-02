@@ -34,8 +34,9 @@ def HandleCollision(game_object, move_direction):
 ## \date    09/01/2018
 def CheckForCollision(game_object, map):
     # CHECK FOR COLLISION.
+    # The object is allowed to collide with itself.
     objects_to_check = [object for object in map.Map.values() if
-        not (object.__class__.__name__ == game_object.__class__.__name__)]
+        not object == game_object]
     for object in objects_to_check:
         collision_occurred = game_object.Coordinates.colliderect(object.Coordinates)
         if collision_occurred:

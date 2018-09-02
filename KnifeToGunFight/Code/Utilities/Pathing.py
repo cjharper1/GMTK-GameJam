@@ -4,13 +4,26 @@ from Math.Vector2 import Vector2
 from ThirdParty.astar import AStar
 
 ## Pathfinding class to determine the shortest path between two
-## positions on the game map specified as (column_index, row_index).
+## positions on the game map.
 ## Inherits from the third-party class AStar and implements required methods.
 ## \author  Tom Rogan
 ## \date    09/01/2018
 class Pathing(AStar):
     def __init__(self, level_map):
         self.Map = level_map
+        self.Destination = None
+
+    ## Determines the shortest path between two positions on the game map.
+    ## \param[in] start_grid_position - A grid position as a Vector2 of column and row index.
+    ## \param[in] destination_grid_position - The destination as a Vector2 of column and row index.
+    ## \return  A list of Vector2 objects tracing the shortest path, with the first element
+    ##      being start_grid_position, or None if no path could be found.
+    ## \author  Tom Rogan
+    ## \date    09/01/2018
+    def GetPath(self, start_grid_position, destination_grid_position):
+        start = Vector2(start_grid_position[0], start_grid_position[1])
+        self.Destination = Vector2(destination_grid_position[0], destination_grid_position[1])
+        return self.astar(start, self.Destination)
 
     ## For a given grid position, determines the list of neighboring grid positions
     ## that are reachable and not occupied by a game object.
@@ -31,7 +44,8 @@ class Pathing(AStar):
             in_x_bounds = (0 <= neighbor.X < self.Map.MapWidth)
             in_y_bounds = (0 <= neighbor.Y < self.Map.MapHeight)
             unoccupied = (neighbor.X, neighbor.Y) not in self.Map.Map
-            if in_x_bounds and in_y_bounds and unoccupied:
+            is_destination = (neighbor == self.Destination)
+            if in_x_bounds and in_y_bounds and (unoccupied or is_destination):
                 accessible_neighbors.append(neighbor)
 
         return accessible_neighbors

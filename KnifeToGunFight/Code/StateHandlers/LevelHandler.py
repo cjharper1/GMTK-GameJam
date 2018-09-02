@@ -1,14 +1,20 @@
+from itertools import islice
 import math
 import os
+import random
 import sys
 
 import pygame
 
-from Graphics.LevelMap import LevelMap
 from .StateHandler import StateHandler
+from Graphics.LevelMap import LevelMap
+from Math.Vector2 import Vector2
+from Objects.GameObject import GameObject
 from Objects.Player import Player
 from Objects.Teleporter import Teleporter
 from Objects.Turret import Turret
+from Utilities.CollisionDetection import MoveDirection
+from Utilities.Pathing import Pathing
 
 ## The handler class for controlling a level of the game.
 ## \author  Michael Watkinson
@@ -30,6 +36,7 @@ class LevelHandler(StateHandler):
         self.GameWindow = game_window
         self.LevelFilepath = level_filepath if level_filepath is not None else '../Maps/Level1.txt'
         self.Map = LevelMap(self.LevelFilepath)
+        self.Pathing = Pathing(self.Map)
 
     ## Runs the level and and handles displaying all graphics, playing sounds, and player interaction.
     ## \return  The next StateHandler class to be run in the main game loop.
@@ -48,7 +55,8 @@ class LevelHandler(StateHandler):
 
             # UPDATE THE TELEPORTER ANIMATION.
             teleporter = self.Map.GetTeleporter()
-            teleporter.Update(time_since_last_update_in_seconds)
+            if teleporter is not None:
+                teleporter.Update(time_since_last_update_in_seconds)
 
             # Set player position and rotation.
             #position = pygame.mouse.get_pos()
@@ -69,6 +77,9 @@ class LevelHandler(StateHandler):
                 
                 # Prepare the handler for the next level.
                 return LevelHandler(self.GameWindow, next_level_filepath)
+
+            # ALLOW ENEMIES TO REACT TO THE PLAYER.
+            self.UpdateEnemies()
 
             # UPDATE GAME OBJECTS BASED ON ELAPSED TIME.
             ## \todo    Update all objects, not just sword.
@@ -145,11 +156,75 @@ class LevelHandler(StateHandler):
             collided_object = player.MoveRight(self.Map, allowed_collision_classes)
             
         # HANDLE USING TELEPORTER.
-        print(collided_object)
         collided_with_teleporter = isinstance(collided_object, Teleporter)
-        if collided_with_teleporter:
-            return True
+        return collided_with_teleporter
+
+    ## Causes enemies to move, shoot, or perform other actions.
+    ## \author  Tom Rogan
+    ## \date    09/01/2018
+    def UpdateEnemies(self):
+        # UPDATE EACH ENEMY.
+        player = self.Map.GetPlayer()
+        player_position = self.Map.GetGridPosition(player.TopLeftCornerPosition)
+        enemies = self.Map.GetEnemies()
+        for enemy in enemies:
+            # TODO: SHOOT AT PLAYER.
+            
+
+            # MOVE IF NON-STATIONARY.
+            enemy_is_stationary = isinstance(enemy, Turret)
+            if enemy_is_stationary:
+                continue
+            
+            # CHECK IF A RANDOM MOVE SHOULD BE MADE.
+            RANDOM_MOVE_CHANCE = 0.5
+            move_randomly = (random.random() < RANDOM_MOVE_CHANCE)
+            if move_randomly:
+                direction_to_move = random.choice([MoveDirection.Up, MoveDirection.Down, MoveDirection.Left, MoveDirection.Right])
+            else:
+                # Get the shortest path to the player from the enemy.
+                enemy_position = self.Map.GetGridPosition(enemy.TopLeftCornerPosition)
+                path_to_player = self.Pathing.GetPath(enemy_position, player_position)
+                if path_to_player is None:
+                    # This enemy cannot currently reach the player.
+                    continue
+
+                # Get the next grid position that the enemy should move to in
+                # order to reach the player.
+                next_grid_position_in_path_to_player = next(islice(path_to_player, 1, None), None)
+                direction_to_move = LevelHandler.GetDirectionTowardPosition(
+                    Vector2(enemy_position[0], enemy_position[1]),
+                    next_grid_position_in_path_to_player)
+
+            # Move.
+            if direction_to_move is None:
+                continue
+            elif direction_to_move == MoveDirection.Up:
+                enemy.MoveUp(self.Map)
+            elif direction_to_move == MoveDirection.Down:
+                enemy.MoveDown(self.Map)
+            elif direction_to_move == MoveDirection.Left:
+                enemy.MoveLeft(self.Map)
+            elif direction_to_move == MoveDirection.Right:
+                enemy.MoveRight(self.Map)
+
+    ## Gets the direction (up, down, left, or right) from one position to another.
+    ## \param[in]  origin_position - The first position as a Vector2 of column and row index.
+    ## \param[in]  target_position - The target position as a Vector2 of column and row index.
+    ## \author  Tom Rogan
+    ## \date    09/01/2018
+    @staticmethod
+    def GetDirectionTowardPosition(origin_position, target_position):
+        if target_position is None:
+            return None
+        elif origin_position.Y > target_position.Y:
+            return MoveDirection.Up
+        elif origin_position.Y < target_position.Y:
+            return MoveDirection.Down
+        elif origin_position.X > target_position.X:
+            return MoveDirection.Left
+        elif origin_position.X < target_position.X:
+            return MoveDirection.Right
         else:
-            return False
-            
-            
+            # Origin and target positions are the same.
+            return None

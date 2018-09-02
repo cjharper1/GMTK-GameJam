@@ -1,5 +1,7 @@
 # Class for displaying the map of a level.
 from Objects.GameObject import GameObject
+from Objects.Enemy import Enemy
+from Objects.LittleRobot import LittleRobot
 from Objects.Player import Player
 from Objects.Wall import Wall
 from Objects.Teleporter import Teleporter
@@ -17,6 +19,8 @@ class GameObjectMapping(object):
             return Turret(x_position, y_position)
         if ascii_object == 'D':
             return Teleporter(x_position, y_position)
+        if ascii_object == 'S':
+            return LittleRobot(x_position, y_position)
         else:
             return None
 
@@ -76,6 +80,14 @@ class LevelMap(object):
             player_found = (isinstance(object, Player))
             if player_found:
                 return object
+                
+    ## Gets all enemies from the game map.
+    ## \return  A list of all Enemy objects on the map.
+    ## \author  Tom Rogan
+    ## \date    09/01/2018
+    def GetEnemies(self):
+        # SEARCH THROUGH ALL THE OBJECTS IN THE MAP FOR THE ENEMY OBJECTS.
+        return [object for object in self.Map.values() if isinstance(object, Enemy)]
 
     ## Gets the teleporter object from the game map.
     ## \return  The Teleporter object.
