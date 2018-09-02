@@ -13,10 +13,10 @@ class Enemy(GameObject):
 
     ## Shoot at the player.
     ## \param[in]   player - The player to shoot at.
-    ## \param[in]   game_map - The game map containing this enemy and the player.
+    ## \return  The shot laser.
     ## \author  CJ Harper
     ## \date    09/01/2018
-    def Shoot(self, player : GameObject, game_map):
+    def Shoot(self, player):
         # CALCULATE THE TRAJECTORY TO THE PLAYER.
         # The trajectory is the amount of pixels an object will move each game update in
         # both the x and y position.
@@ -45,5 +45,5 @@ class Enemy(GameObject):
         # GENERATE A LASER AND FIRE IT TOWARDS THE PLAYER.
         laser = Laser(self.Coordinates.centerx, self.Coordinates.centery, Laser.Color.Red, trajectory_to_player)
 
-        ## \todo Add the laser to the map.
+        return laser
 

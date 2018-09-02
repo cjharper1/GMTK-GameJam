@@ -1,6 +1,7 @@
 from itertools import islice
 import math
 import os
+import random
 import sys
 
 import pygame
@@ -145,6 +146,16 @@ class LevelHandler(StateHandler):
             collided_object = player.MoveDown(self.Map, allowed_collision_classes)
         if currently_pressed_keys[pygame.K_d]:
             collided_object = player.MoveRight(self.Map, allowed_collision_classes)
+
+        # CHECK IF THE PLAYER HIT ANY LASERS.
+        for laser in self.Map.Lasers:
+            player_hit_laser = player.Coordinates.colliderect(laser.Coordinates)
+            if player_hit_laser:
+                # REMOVE THE LASER FROM THE MAP.
+                self.Map.Lasers.remove(laser)
+
+                # DEAL DAMAGE TO PLAYER.
+                # \todo implement this.
             
         # HANDLE USING TELEPORTER.
         collided_with_teleporter = isinstance(collided_object, Teleporter)
@@ -160,8 +171,16 @@ class LevelHandler(StateHandler):
         player_position_vector = Vector2(player_position[0], player_position[1])
         enemies = self.Map.GetEnemies()
         for enemy in enemies:
-            # TODO: SHOOT AT PLAYER.
-            
+            # SHOOT AT THE PLAYER.
+            # This will be a random chance so the robots aren't shooting every frame.
+            shoot_roll = random.randint(1, 100)
+            PERCENTAGE_CHANCE_TO_SHOOT_PLAYER = 10
+            enemy_shoot = (shoot_roll <= PERCENTAGE_CHANCE_TO_SHOOT_PLAYER)
+            if enemy_shoot:
+                laser = enemy.Shoot(player)
+
+                # Add the laser to the game map.
+                self.Map.Lasers.append(laser)
 
             # MOVE IF NON-STATIONARY.
             enemy_is_stationary = isinstance(enemy, Turret)

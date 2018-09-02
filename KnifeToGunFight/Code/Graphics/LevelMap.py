@@ -36,6 +36,8 @@ class LevelMap(object):
         ## The map containing all of the game objects as a dictionary.  They key of the dictionary is
         ## a two-tuple of the coordinates of the block the object is currently occupying and the value is the object.
         self.Map = {}
+        ## The lasers on the map. These are stored separately since they can occupy the same space as other objects.
+        self.Lasers = []
         
         # Build the map.
         self.ParseMap()

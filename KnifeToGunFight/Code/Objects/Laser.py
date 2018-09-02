@@ -1,4 +1,5 @@
 from enum import Enum
+import math
 import pygame
 
 from .GameObject import GameObject
@@ -33,10 +34,20 @@ class Laser(GameObject):
     ## \date    09/01/2018
     def __init__(self, initial_x_position, initial_y_position, color, trajectory):
         GameObject.__init__(self, initial_x_position, initial_y_position)
-        ## The image representing this laser.
-        self.Image = pygame.image.load(self.LASER_IMAGE_PER_COLOR[color]).convert()
         ## The trajectory of the laser.
         self.Trajectory = trajectory
+
+        ## The image needs to be rotated based on the trajectory.
+        radians_to_rotate = -math.atan2(trajectory.Y, trajectory.X)
+        degrees_of_rotation = math.degrees(radians_to_rotate)
+
+        # 90 degrees is subtracted from the rotation since the image spawns facing upward (i.e. rotated 90 degrees from the x-axis)
+        # and the arctan function calculates rotation as if the image spawned facing the x-axis.
+        degrees_of_rotation -= 90
+
+        # The default image is rotated every time because continuing to rotate the same image
+        # over and over will result in degradation of image quality.
+        self.Image = pygame.transform.rotate(pygame.image.load(self.LASER_IMAGE_PER_COLOR[color]).convert(), degrees_of_rotation)
 
     ## Updates the state of the laser.
     ## \author  CJ Harper

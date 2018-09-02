@@ -34,6 +34,14 @@ class GameWindow():
         player = game_map.GetPlayer()
         if player:
             player.Sword.Render(self.Screen)
+
+        # DRAW ALL LASERS.
+        # Lasers can occupy the same space as enemies so they
+        # are not stored in the map.
+        # \todo Update map to store a list of objects
+        # rather than be a dictionary.
+        for laser in game_map.Lasers:
+            self.__DrawImage(laser)
         
         # UPDATE THE DISPLAY TO MAKE THE UPDATED OBJECTS VISIBLE.
         pygame.display.update()
